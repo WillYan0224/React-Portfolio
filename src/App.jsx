@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   motion,
   useScroll,
   useTransform,
   AnimatePresence,
 } from "framer-motion";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Float, ContactShadows } from "@react-three/drei";
+import { Points, PointMaterial, Edges } from "@react-three/drei";
+import * as THREE from "three"; // Required for DoubleSide material
 import {
   Github,
   Linkedin,
@@ -15,6 +18,7 @@ import {
   Code2,
   Database,
   Layout,
+  X,
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 
@@ -141,71 +145,177 @@ const Navbar = () => (
   </nav>
 );
 
-// 2. Big Banner (Hero) - Updated with Text Scroll Animation
+// 2. Big Banner (Hero) - Updated with Geometric Polygons
+// --- 3D Component: Single Floating Shape ---
+const FloatingShape = ({ position, color, speed, type }) => {
+  const meshRef = useRef();
+
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += delta * speed;
+      meshRef.current.rotation.y += delta * speed;
+    }
+  });
+
+  return (
+    <Float
+      speed={2}
+      rotationIntensity={1}
+      floatIntensity={2}
+      floatingRange={[-0.5, 0.5]}
+    >
+      <mesh ref={meshRef} position={position}>
+        {/* Geometry Logic */}
+        {type === 0 && <circleGeometry args={[0.5, 3]} />}
+        {type === 1 && <tetrahedronGeometry args={[0.6, 0]} />}
+        {type === 2 && <octahedronGeometry args={[0.5, 0]} />}
+        {type === 3 && <dodecahedronGeometry args={[0.5, 0]} />}
+
+        {/* 
+           THE FIX: SOLID BLACK MATERIAL
+           - color="#050505": Almost black (matches your bg), makes it look like a solid object.
+           - transparent={false}: Critical. This tells Three.js "I am solid, hide stuff behind me".
+           - roughness={0.1}: Adds a tiny bit of surface reflection like obsidian (optional).
+        */}
+        <meshStandardMaterial
+          color="#050505"
+          transparent={false}
+          opacity={1}
+          roughness={0.1}
+          metalness={0.5}
+          side={THREE.DoubleSide}
+        />
+
+        {/* Thick Glowing Wireframe */}
+        <Edges
+          scale={1.02} // Tighter fit looks better on solid objects
+          threshold={15}
+          color={color}
+        >
+          <meshBasicMaterial transparent opacity={1} side={THREE.DoubleSide} />
+        </Edges>
+      </mesh>
+    </Float>
+  );
+};
+
+// --- 3D Component: Background Manager ---
+const GeometricBackground = () => {
+  const shapes = useMemo(() => {
+    return new Array(40).fill(0).map(() => ({
+      position: [
+        (Math.random() - 0.5) * 18, // Wider spread (X)
+        (Math.random() - 0.5) * 10, // Wider spread (Y)
+        (Math.random() - 0.5) * 10, // Wider spread (Z)
+      ],
+      type: Math.floor(Math.random() * 4),
+      color:
+        Math.random() > 0.5
+          ? "#6366f1"
+          : Math.random() > 0.5
+          ? "#a855f7"
+          : "#ffffff",
+      speed: Math.random() * 0.5 + 0.2,
+    }));
+  }, []);
+
+  return (
+    <group>
+      {shapes.map((shape, i) => (
+        <FloatingShape
+          key={i}
+          position={shape.position}
+          color={shape.color}
+          type={shape.type}
+          speed={shape.speed}
+        />
+      ))}
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={1.5} />
+    </group>
+  );
+};
+
+// 2. Big Banner (Hero) - Updated with Glassmorphism Container
 const Hero = () => {
   const [roleIndex, setRoleIndex] = useState(0);
-  const ROLES = ["Web Programmer", "Game Programmer", "VFX Designer"]; // The words to cycle through
+  const ROLES = ["Web", "Game", "CG"];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % ROLES.length);
-    }, 2500); // Change every 2.5 seconds
-
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="h-screen flex flex-col justify-center px-6 md:px-20 relative overflow-hidden">
-      {/* Background Gradient Blob */}
-      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px]" />
+    <section className="h-screen w-full relative overflow-hidden bg-black flex flex-col justify-center px-6 md:px-20">
+      {/* --- 3D Background Layer --- */}
+      <div className="absolute inset-0 z-0">
+        <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
+          <fog attach="fog" args={["#000000", 5, 20]} />
+          <GeometricBackground />
+        </Canvas>
+      </div>
 
+      {/* --- Content Layer --- */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="z-10 max-w-5xl"
+        className="z-10 max-w-5xl pointer-events-none"
       >
-        {/* Animated Sub-headline */}
-        <h2 className="text-xl md:text-2xl text-primary font-mono mb-6 flex items-center gap-2">
-          <span>Hello, I am a</span>
+        <div className="pointer-events-auto backdrop-blur-sm bg-black/30 border border-white/5 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
-          <div className="relative h-8 w-64 overflow-hidden flex items-center">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={roleIndex}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="absolute font-bold text-white block"
-              >
-                {ROLES[roleIndex]}
-              </motion.span>
-            </AnimatePresence>
-          </div>
-        </h2>
+          <h2 className="text-xl md:text-2xl text-primary font-mono mb-6 flex items-center gap-2">
+            <span>Hello, I am a</span>
+            <div className="relative h-8 w-32 overflow-hidden flex items-center">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={roleIndex}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="absolute font-bold text-white block"
+                >
+                  {ROLES[roleIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+            <span>Developer</span>
+          </h2>
 
-        <h1 className="text-6xl md:text-8xl font-bold leading-tight mb-6">
-          Building{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            digital experiences
-          </span>{" "}
-          that matter.
-        </h1>
-        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-8">
-          I craft modern websites and robust applications with a focus on
-          interaction, design, and performance.
-        </p>
-        <div className="flex gap-4">
-          <a
-            href="#work"
-            className="border border-white/20 bg-white/5 backdrop-blur-sm px-8 py-4 rounded-lg hover:bg-white hover:text-black transition-all duration-300"
-          >
-            View My Work
-          </a>
-          <div className="flex gap-4 items-center px-4">
-            {/* Make sure these icons are imported from lucide-react at the top */}
-            <Github className="cursor-pointer hover:text-primary transition-colors" />
+          <h1 className="text-6xl md:text-8xl font-bold leading-tight mb-6">
+            Building{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              digital experiences
+            </span>{" "}
+            that matter.
+          </h1>
+
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-8">
+            I craft modern websites and robust applications with a focus on
+            interaction, design, and performance.
+          </p>
+
+          <div className="flex gap-4">
+            <a
+              href="#work"
+              className="relative inline-flex h-14 overflow-hidden rounded-lg p-[2px] focus:outline-none group"
+            >
+              {/* The Spinning Gradient Layer */}
+              <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]" />
+
+              {/* The Button Content (Masks the center) */}
+              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg bg-black/90 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-colors group-hover:bg-zinc-900 group-hover:text-primary">
+                View My Work
+              </span>
+            </a>
+            <div className="flex gap-4 items-center px-4">
+              <Github className="cursor-pointer hover:text-primary transition-colors" />
+            </div>
           </div>
         </div>
       </motion.div>
@@ -254,7 +364,36 @@ const TechMarquee = () => {
     </div>
   );
 };
-// 4. About Section (New)
+
+// --- Transition/Subtitle Component ---
+const SectionSeparator = () => {
+  return (
+    <section className="py-12 bg-zinc-950 flex flex-col items-center justify-center relative z-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="text-center"
+      >
+        {/* Top Vertical Line */}
+        <div className="w-[1px] h-20 bg-gradient-to-b from-transparent via-primary to-transparent mx-auto mb-8 opacity-50" />
+
+        {/* Subtitle Text */}
+        <span className="text-primary font-mono text-sm tracking-[0.3em] uppercase mb-3 block">
+          The Developer
+        </span>
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+          Behind the Screen
+        </h2>
+        {/* Top Vertical Line */}
+        <div className="w-[1px] h-20 bg-gradient-to-b from-transparent via-primary to-transparent mx-auto mb-8 opacity-50" />
+      </motion.div>
+    </section>
+  );
+};
+
+// 4. About Section (Updated with Catchphrase)
 const About = () => {
   return (
     <section id="about" className="py-24 px-6 md:px-20 bg-zinc-900/30">
@@ -276,6 +415,15 @@ const About = () => {
             </span>
             .
           </h3>
+
+          {/* --- CATCHPHRASE SECTION --- */}
+          <div className="mb-8 border-l-4 border-primary pl-6 py-2">
+            <p className="text-2xl italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+              "Crafting digital realms where logic meets imagination."
+            </p>
+          </div>
+          {/* --------------------------- */}
+
           <p className="text-gray-400 text-lg mb-6 leading-relaxed">
             I am a passionate developer with a knack for creating immersive
             digital experiences. My journey started with game development, which
@@ -331,7 +479,6 @@ const About = () => {
     </section>
   );
 };
-
 // 5. Video Card for Project Preview (Updated)
 const FeaturedProject = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -644,6 +791,7 @@ function App() {
       <Navbar />
       <Hero />
       <TechMarquee />
+      <SectionSeparator />
       <About />
 
       <FeaturedProject />
