@@ -20,6 +20,8 @@ import {
   Linkedin,
   ExternalLink,
   X,
+  ChevronLeft,
+  ChevronRight,
   Play, // Added Play just in case, though not used in new video card
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
@@ -29,7 +31,7 @@ const LanguageContext = createContext();
 const useLanguage = () => useContext(LanguageContext);
 
 // --- 2. DATA CONSTANTS ---
-import { SKILLS_DATA } from "./data/skills";
+import { SKILLS_DATA, DEVTOOL_DATA } from "./data/skills";
 import { PROJECTS } from "./data/porjects";
 import { TRANSLATIONS } from "./data/translations";
 // ** ADDED MISSING PROJECTS DATA **
@@ -92,35 +94,50 @@ const Navbar = () => {
 };
 
 // --- 3D Components ---
+// --- Optimized Floating Shape ---
+// moved geometry creation outside to prevent re-calculation
+const circleGeo = new THREE.CircleGeometry(0.5, 3);
+const tetraGeo = new THREE.TetrahedronGeometry(0.6, 0);
+const octaGeo = new THREE.OctahedronGeometry(0.5, 0);
+const dodecaGeo = new THREE.DodecahedronGeometry(0.5, 0);
+
 const FloatingShape = ({ position, color, speed, type }) => {
   const meshRef = useRef();
+
+  // Use a lighter rotation logic
   useFrame((state, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += delta * speed;
-      meshRef.current.rotation.y += delta * speed;
+      // Rotate slower to reduce visual jitter
+      meshRef.current.rotation.x += delta * speed * 0.8;
+      meshRef.current.rotation.y += delta * speed * 0.8;
     }
   });
+
+  // Select geometry from pre-created instances
+  let geometry;
+  if (type === 0) geometry = circleGeo;
+  else if (type === 1) geometry = tetraGeo;
+  else if (type === 2) geometry = octaGeo;
+  else geometry = dodecaGeo;
 
   return (
     <Float
       speed={2}
       rotationIntensity={1}
-      floatIntensity={2}
-      floatingRange={[-0.5, 0.5]}
+      floatIntensity={1.5} // Reduced intensity slightly
+      floatingRange={[-0.2, 0.2]} // Reduced range to keep them closer
     >
-      <mesh ref={meshRef} position={position}>
-        {type === 0 && <circleGeometry args={[0.5, 3]} />}
-        {type === 1 && <tetrahedronGeometry args={[0.6, 0]} />}
-        {type === 2 && <octahedronGeometry args={[0.5, 0]} />}
-        {type === 3 && <dodecahedronGeometry args={[0.5, 0]} />}
+      <mesh ref={meshRef} position={position} geometry={geometry}>
+        {/* Simplified Material: Lower roughness, remove metalness calculation */}
         <meshStandardMaterial
           color="#050505"
           transparent={false}
           opacity={1}
           roughness={0.1}
-          metalness={0.5}
           side={THREE.DoubleSide}
         />
+
+        {/* Optimized Edges: Lower threshold means less lines to calculate */}
         <Edges scale={1.02} threshold={15} color={color}>
           <meshBasicMaterial transparent opacity={1} side={THREE.DoubleSide} />
         </Edges>
@@ -129,9 +146,11 @@ const FloatingShape = ({ position, color, speed, type }) => {
   );
 };
 
+// --- Optimized Background Manager ---
 const GeometricBackground = () => {
   const shapes = useMemo(() => {
-    return new Array(40).fill(0).map(() => ({
+    // Reduced count from 40 to 20 for better performance
+    return new Array(20).fill(0).map(() => ({
       position: [
         (Math.random() - 0.5) * 18,
         (Math.random() - 0.5) * 10,
@@ -147,6 +166,7 @@ const GeometricBackground = () => {
       speed: Math.random() * 0.5 + 0.2,
     }));
   }, []);
+
   return (
     <group>
       {shapes.map((shape, i) => (
@@ -158,7 +178,7 @@ const GeometricBackground = () => {
   );
 };
 
-// 2. Hero
+// --- Optimized Hero Component ---
 const Hero = () => {
   const { t } = useLanguage();
   const [roleIndex, setRoleIndex] = useState(0);
@@ -174,7 +194,17 @@ const Hero = () => {
   return (
     <section className="h-screen w-full relative overflow-hidden bg-black flex flex-col justify-center px-6 md:px-20">
       <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
+        {/* 
+           PERFORMANCE SETTINGS:
+           1. dpr={[1, 1.5]}: Caps resolution on retina screens. Huge FPS booster.
+           2. antialias: false: Makes edges slightly jagged but much faster.
+           3. performance={{ min: 0.5 }}: Automatically lowers quality if FPS drops.
+        */}
+        <Canvas
+          dpr={[1, 1.5]}
+          camera={{ position: [0, 0, 8], fov: 50 }}
+          gl={{ antialias: false, powerPreference: "high-performance" }}
+        >
           <fog attach="fog" args={["#000000", 5, 20]} />
           <GeometricBackground />
         </Canvas>
@@ -186,11 +216,12 @@ const Hero = () => {
         transition={{ duration: 0.8 }}
         className="z-10 max-w-5xl pointer-events-none"
       >
-        <div className="pointer-events-auto backdrop-blur-md bg-black/30 border border-white/10 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div className="pointer-events-auto backdrop-blur-sm bg-black/30 border border-white/5 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+
           <h2 className="text-xl md:text-2xl text-primary font-mono mb-6 flex items-center gap-2">
             <span>{t.hero.greeting}</span>
-            <div className="relative h-8 w-32 overflow-hidden flex items-center">
+            <div className="relative ml-2 h-8 w-64 flex items-center ">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={ROLES[roleIndex]}
@@ -204,8 +235,8 @@ const Hero = () => {
                 </motion.span>
               </AnimatePresence>
             </div>
-            <span>Developer</span>
           </h2>
+
           <h1 className="text-5xl md:text-8xl font-bold leading-tight mb-6">
             {t.hero.title_start}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
@@ -213,9 +244,11 @@ const Hero = () => {
             </span>{" "}
             {t.hero.title_end}
           </h1>
+
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-8">
             {t.hero.desc}
           </p>
+
           <div className="flex gap-4">
             <a
               href="#work"
@@ -232,23 +265,26 @@ const Hero = () => {
     </section>
   );
 };
-
 // 3. Tech Marquee
 const TechMarquee = () => {
   return (
-    <div className="py-20 bg-zinc-900 overflow-hidden relative border-y border-white/5">
+    <div className="py-20 bg-zinc-900 overflow-hidden relative border-y border-white/5 flex flex-col gap-20">
+      {/* Side Fade Gradients (Covers both rows) */}
       <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-zinc-900 to-transparent z-10" />
       <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-zinc-900 to-transparent z-10" />
+
+      {/* --- ROW 1: Scrolling LEFT --- */}
       <motion.div
         className="flex whitespace-nowrap"
-        animate={{ x: [0, -1000] }}
+        animate={{ x: [0, -1035] }} // -1035 is approx width of one set of data. Adjust if gap changes.
         transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
       >
-        {[...SKILLS_DATA, ...SKILLS_DATA, ...SKILLS_DATA].map(
+        {/* Repeating 4 times to ensure no gaps on wide screens */}
+        {[...SKILLS_DATA, ...SKILLS_DATA, ...SKILLS_DATA, ...SKILLS_DATA].map(
           (skill, index) => (
             <div
-              key={index}
-              className="mx-8 flex items-center gap-4 group cursor-default"
+              key={`row1-${index}`}
+              className="mx-4 flex items-center gap-4 group cursor-default"
             >
               <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5 group-hover:border-primary/50 group-hover:bg-zinc-800/80 transition-colors duration-300">
                 <img
@@ -259,12 +295,43 @@ const TechMarquee = () => {
                   }`}
                 />
               </div>
-              <span className="text-2xl font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-tight">
+              <span className="text-xl font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-tight">
                 {skill.name}
               </span>
             </div>
           )
         )}
+      </motion.div>
+
+      {/* --- ROW 2: Scrolling RIGHT --- */}
+      <motion.div
+        className="flex whitespace-nowrap"
+        initial={{ x: -1035 }}
+        animate={{ x: [-1035, 0] }} // Moves from left to right
+        transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
+      >
+        {/* We reverse the data here so the order looks different than the top row */}
+        {[...DEVTOOL_DATA, ...DEVTOOL_DATA, ...DEVTOOL_DATA, ...DEVTOOL_DATA]
+          .reverse()
+          .map((devtool, index) => (
+            <div
+              key={`row2-${index}`}
+              className="mx-4 flex items-center gap-4 group cursor-default"
+            >
+              <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5 group-hover:border-secondary/50 group-hover:bg-zinc-800/80 transition-colors duration-300">
+                <img
+                  src={devtool.icon}
+                  alt={devtool.name}
+                  className={`w-7 h-7 object-contain ${
+                    devtool.invert ? "invert brightness-0" : ""
+                  }`}
+                />
+              </div>
+              <span className="text-xl font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-tight">
+                {devtool.name}
+              </span>
+            </div>
+          ))}
       </motion.div>
     </div>
   );
@@ -283,7 +350,7 @@ const SectionSeparator = () => {
         className="text-center"
       >
         <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-primary to-transparent mx-auto mb-8 opacity-50" />
-        <span className="text-primary font-mono text-sm tracking-[0.3em] uppercase mb-3 block">
+        <span className="text-primary/90 font-mono text-3xl tracking-[0.3em] uppercase mb-3 block">
           {t.separator.subtitle}
         </span>
         <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
@@ -310,11 +377,9 @@ const About = () => {
           <h2 className="text-primary font-mono mb-4">{t.about.title}</h2>
           <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
             {t.about.headline_start}{" "}
-            <span className="text-white border-b-4 border-primary">
-              {t.about.headline_design}
-            </span>{" "}
+            <span className="  font-bold">{t.about.headline_design}</span>{" "}
             {t.about.headline_suffix && <span>と</span>}{" "}
-            <span className="text-white border-b-4 border-secondary">
+            <span className="text-secondary font-bold ">
               {t.about.headline_eng}
             </span>{" "}
             {t.about.headline_suffix}
@@ -504,63 +569,142 @@ const FeaturedProject = () => {
 // 7. Project List
 const ProjectList = () => {
   const { t } = useLanguage();
+  const scrollContainerRef = useRef(null);
+
+  // Card dimensions for calculation (Width + Gap)
+  // Desktop: 380px width + 24px gap = 404px per unit
+  // Mobile: 300px width + 24px gap = 324px per unit
+  const getItemWidth = () => {
+    return window.innerWidth >= 768 ? 404 : 324;
+  };
+
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const { current } = scrollContainerRef;
+      // Scroll by 2 units
+      const scrollAmount = getItemWidth() * 2;
+
+      if (direction === "left") {
+        current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+      } else {
+        current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
+    }
+  };
+
   return (
-    <section className="py-24 px-6 md:px-20 bg-zinc-950">
-      <h2 className="text-4xl font-bold mb-12">{t.projects.title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {PROJECTS.map((project, index) => {
-          const translatedProject = t.projects.list[index]; // Map translated text
-          return (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              className="group"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-xl mb-4">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                  <a
-                    href={project.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
-                  >
-                    <ExternalLink size={20} />
-                  </a>
-                  <a
-                    href={project.gitUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
-                  >
-                    <Github size={20} />
-                  </a>
-                </div>
-              </div>
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                    {translatedProject.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 mt-1 line-clamp-2">
-                    {translatedProject.description}
-                  </p>
-                </div>
-                <span className="text-xs font-mono border border-gray-700 px-2 py-1 rounded text-gray-400 uppercase whitespace-nowrap ml-2">
-                  {project.category}
-                </span>
-              </div>
-            </motion.div>
-          );
-        })}
+    <section className="py-24 bg-zinc-950 flex justify-center">
+      {/* Squeezed Container */}
+      <div className="min-width px-4">
+        {/* Header */}
+        <div className="flex justify-between items-end mb-8 px-2">
+          <h2 className="text-4xl font-bold">{t.projects.title}</h2>
+          <div className="hidden md:block text-gray-500 text-sm font-mono">
+            {PROJECTS.length} PROJECTS
+          </div>
+        </div>
+
+        {/* --- Layout Container: [Button] [ScrollArea] [Button] --- */}
+        <div className="flex items-center gap-4">
+          {/* Left Button (Static Position) */}
+          <button
+            onClick={() => scroll("left")}
+            className="hidden md:flex flex-shrink-0 p-3 rounded-full bg-zinc-800 border border-white/10 text-white hover:bg-primary hover:scale-110 transition-all shadow-xl z-10"
+            aria-label="Scroll Left"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          {/* 
+             2-Row Grid Container 
+             - grid-rows-2: Forces 2 rows height
+             - grid-flow-col: Fills Top-Down, then moves Right (Horizontal Scroll)
+             - overflow-x-auto: Enables scrolling
+          */}
+          <div
+            ref={scrollContainerRef}
+            className="grid grid-rows-2 grid-flow-col gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar w-full"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {PROJECTS.map((project, index) => {
+              const translatedProject = t.projects.list[index];
+
+              return (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3 }}
+                  // Fixed Width is required for horizontal grid flow
+                  className="w-[300px] md:w-[380px] group/card"
+                >
+                  {/* Image Card */}
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3 border border-white/5 bg-zinc-900">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700"
+                    />
+
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                      <a
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
+                      >
+                        <ExternalLink size={20} />
+                      </a>
+                      <a
+                        href={project.gitUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
+                      >
+                        <Github size={20} />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Text Content */}
+                  <div className="flex justify-between items-start px-1">
+                    <div>
+                      <h3 className="text-lg font-bold group-hover/card:text-primary transition-colors">
+                        {translatedProject.title}
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-1 line-clamp-1">
+                        {translatedProject.description}
+                      </p>
+                    </div>
+                    {/* Category Badge */}
+                    <span className="text-[10px] font-bold tracking-wider border border-white/10 bg-white/5 px-2 py-1 rounded text-gray-400 uppercase whitespace-nowrap ml-3">
+                      {project.category}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Right Button (Static Position) */}
+          <button
+            onClick={() => scroll("right")}
+            className="hidden md:flex flex-shrink-0 p-3 rounded-full bg-zinc-800 border border-white/10 text-white hover:bg-primary hover:scale-110 transition-all shadow-xl z-10"
+            aria-label="Scroll Right"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
       </div>
+
+      {/* Hide Scrollbar Style */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };

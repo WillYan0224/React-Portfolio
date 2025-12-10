@@ -8,18 +8,26 @@ export const TRANSLATIONS = {
     },
     hero: {
       greeting: "Hello, I am a",
-      roles: ["Web", "Game", "CG"],
+      roles: [
+        "Web Developer",
+        "Game Developer",
+        "CG Programmer",
+        "Image Processing Engineer",
+      ],
       title_start: "Building",
       title_highlight: "digital experiences",
       title_end: "that matter.",
       desc: "I craft modern websites and robust applications with a focus on interaction, design, and performance.",
       cta: "View My Work",
     },
-    separator: { subtitle: "The Developer", title: "Behind the Screen" },
+    separator: {
+      subtitle: "AI Era",
+      title: "Information × Content × Engineering",
+    },
     about: {
       title: "Who I Am",
       headline_start: "Bridging the gap between",
-      headline_design: "design",
+      headline_design: "content",
       headline_eng: "engineering",
       headline_suffix: "",
       catchphrase: "Crafting digital realms where logic meets imagination.",
@@ -83,7 +91,12 @@ export const TRANSLATIONS = {
     },
     hero: {
       greeting: "こんにちは、私は",
-      roles: ["Web", "ゲーム", "CG"],
+      roles: [
+        "Webデベロッパー",
+        "ゲームデベロッパー",
+        "CGプログラマ",
+        "画像処理エンジニア",
+      ],
       title_start: "",
       title_highlight: "デジタル体験",
       title_end: "を創造します。",
