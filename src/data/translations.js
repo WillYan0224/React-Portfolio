@@ -13,11 +13,12 @@ export const TRANSLATIONS = {
         "Game Developer",
         "CG Programmer",
         "Image Processing Engineer",
+        "VFX Designer",
       ],
       title_start: "Building",
       title_highlight: "digital experiences",
       title_end: "that matter.",
-      desc: "I craft modern websites and robust applications with a focus on interaction, design, and performance.",
+      desc: "I craft CG content and robust game system with a focus on interaction, game experience, and performance.",
       cta: "View My Work",
     },
     separator: {
@@ -26,18 +27,23 @@ export const TRANSLATIONS = {
     },
     about: {
       title: "Who I Am",
-      headline_start: "Bridging the gap between",
-      headline_design: "content",
-      headline_eng: "engineering",
+      // New Structure:
+      headline_prefix: "Bridging the gap between",
+      headline_word1: "content",
+      headline_connector: "and",
+      headline_word2: "engineering",
       headline_suffix: "",
       catchphrase: "Crafting digital realms where logic meets imagination.",
       bio1: "I am a passionate developer with a knack for creating immersive digital experiences. My journey started with game development, which taught me the importance of performance and interaction. Now, I apply those same principles to the web.",
-      bio2: "When I'm not coding, you can find me exploring 3D art, playing competitive FPS games, or deconstructing UI patterns on Awwwards.",
-      stats: { exp: "Years Exp.", proj: "Projects", commit: "Commitment" },
+      bio2: "When I'm not coding, you can find me exploring 3D art, playing video games, or learning new skill for engineering.",
+      stats: {
+        exp: "Years Exp.",
+        proj: "Projects",
+      },
     },
     featured: {
       tag: "Featured Project",
-      title: "Interactive Experience",
+      title: "Unreal Engine5 Dynamic Weather System",
       desc: "A highlight of my best work involving complex animations and video integration.",
       btn: "View Case Study",
     },
@@ -73,7 +79,7 @@ export const TRANSLATIONS = {
     },
     contact: {
       title: "Let's work together",
-      subtitle: "Have a project in mind? Drop me a line.",
+      subtitle: "Have a question in mind? Drop me a line.",
       name: "Name",
       email: "Email",
       message: "Message",
@@ -96,6 +102,7 @@ export const TRANSLATIONS = {
         "ゲームデベロッパー",
         "CGプログラマ",
         "画像処理エンジニア",
+        "VFX デザイナー",
       ],
       title_start: "",
       title_highlight: "デジタル体験",
@@ -106,9 +113,11 @@ export const TRANSLATIONS = {
     separator: { subtitle: "開発者", title: "スクリーンの裏側" },
     about: {
       title: "自己紹介",
-      headline_start: "",
-      headline_design: "デザイン",
-      headline_eng: "エンジニアリング",
+      // New Structure:
+      headline_prefix: "", // No prefix needed in JP
+      headline_word1: "デザイン",
+      headline_connector: "と",
+      headline_word2: "エンジニアリング",
       headline_suffix: "の架け橋に。",
       catchphrase: "論理と想像が出会うデジタル領域を構築する。",
       bio1: "没入感のあるデジタル体験を創造することに情熱を注ぐ開発者です。ゲーム開発からキャリアをスタートし、そこでパフォーマンスとインタラクションの重要性を学びました。現在はその原則をWebに適用しています。",
@@ -116,7 +125,6 @@ export const TRANSLATIONS = {
       stats: {
         exp: "年の経験",
         proj: "プロジェクト",
-        commit: "コミットメント",
       },
     },
     featured: {

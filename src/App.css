@@ -33,6 +33,27 @@
   }
 }
 
+@keyframes neon-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* --- Neon Glow + Moving Gradient --- */
+.neon-gradient-text {
+  background-size: 200% 200%;
+  animation: neon-gradient 4s ease-in-out infinite;
+  text-shadow: 0 0 6px rgba(129, 140, 248, 0.8),
+    /* primary glow */ 0 0 14px rgba(168, 85, 247, 0.9),
+    /* secondary glow */ 0 0 28px rgba(168, 85, 247, 0.6); /* outer halo */
+}
+
 .card {
   padding: 2em;
 }

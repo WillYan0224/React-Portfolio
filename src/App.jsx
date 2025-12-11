@@ -214,9 +214,9 @@ const Hero = () => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="z-10 max-w-5xl pointer-events-none"
+        className="z-10 max-w-[52rem] pointer-events-none"
       >
-        <div className="pointer-events-auto backdrop-blur-sm bg-black/30 border border-white/5 p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div className="pointer-events-auto backdrop-blur-sm bg-black/30 border border-white/5 p-8 md:p-4 rounded-3xl shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
           <h2 className="text-xl md:text-2xl text-primary font-mono mb-6 flex items-center gap-2">
@@ -239,7 +239,7 @@ const Hero = () => {
 
           <h1 className="text-5xl md:text-8xl font-bold leading-tight mb-6">
             {t.hero.title_start}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary neon-gradient-text">
               {t.hero.title_highlight}
             </span>{" "}
             {t.hero.title_end}
@@ -349,8 +349,7 @@ const SectionSeparator = () => {
         transition={{ duration: 0.6 }}
         className="text-center"
       >
-        <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-primary to-transparent mx-auto mb-8 opacity-50" />
-        <span className="text-primary/90 font-mono text-3xl tracking-[0.3em] uppercase mb-3 block">
+        <span className="text-primary/90 font-mono text-4xl tracking-[0.3em] uppercase mb-3 block">
           {t.separator.subtitle}
         </span>
         <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
@@ -369,32 +368,48 @@ const About = () => {
     <section id="about" className="py-24 px-6 md:px-20 bg-zinc-900/30">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <motion.div
+          className="max-w-xl"
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-primary font-mono mb-4">{t.about.title}</h2>
+
+          {/* --- FIXED HEADLINE STRUCTURE --- */}
           <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            {t.about.headline_start}{" "}
-            <span className="  font-bold">{t.about.headline_design}</span>{" "}
-            {t.about.headline_suffix && <span>と</span>}{" "}
-            <span className="text-secondary font-bold ">
-              {t.about.headline_eng}
-            </span>{" "}
-            {t.about.headline_suffix}
+            {t.about.headline_prefix && (
+              <span className="block mb-1">{t.about.headline_prefix}</span>
+            )}
+            <span className="block">
+              <span className="text-primary">{t.about.headline_word1}</span>
+
+              <span className="text-4xl mx-2">
+                {t.about.headline_connector}
+              </span>
+
+              <span className="text-secondary">{t.about.headline_word2}</span>
+
+              {t.about.headline_suffix && (
+                <span> {t.about.headline_suffix}</span>
+              )}
+            </span>
           </h3>
+          {/* ------------------------------- */}
+
           <div className="mb-8 border-l-4 border-primary pl-6 py-2">
             <p className="text-2xl italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
               "{t.about.catchphrase}"
             </p>
           </div>
+
           <p className="text-gray-400 text-lg mb-6 leading-relaxed">
             {t.about.bio1}
           </p>
           <p className="text-gray-400 text-lg mb-8 leading-relaxed">
             {t.about.bio2}
           </p>
+
           <div className="flex gap-8 border-t border-white/10 pt-8">
             <div>
               <h4 className="text-3xl font-bold text-white">3+</h4>
@@ -403,19 +418,14 @@ const About = () => {
               </p>
             </div>
             <div>
-              <h4 className="text-3xl font-bold text-white">50+</h4>
+              <h4 className="text-3xl font-bold text-white">15+</h4>
               <p className="text-sm text-gray-500 uppercase tracking-wider">
                 {t.about.stats.proj}
               </p>
             </div>
-            <div>
-              <h4 className="text-3xl font-bold text-white">100%</h4>
-              <p className="text-sm text-gray-500 uppercase tracking-wider">
-                {t.about.stats.commit}
-              </p>
-            </div>
           </div>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -478,10 +488,10 @@ const FeaturedProject = () => {
         <motion.div
           whileHover={{ scale: 1.01 }}
           transition={{ duration: 0.5 }}
-          className="relative aspect-video bg-zinc-800 rounded-2xl overflow-hidden group border border-white/10 shadow-2xl"
+          className="relative aspect-video bg-zinc-800 rounded-2xl overflow-hidden group border border-white/10 shadow-2xl  w-full  mx-auto max-w-7xl"
         >
           <video
-            className="w-full h-full object-cover opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700 ease-out"
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700 ease-out"
             autoPlay
             muted
             loop
@@ -489,11 +499,6 @@ const FeaturedProject = () => {
           >
             {/* Note: Ensure this file path is correct in your public/videos folder */}
             <source src="/videos/hero.mp4" type="video/mp4" />
-            {/* Fallback to online video if local file missing */}
-            <source
-              src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-blue-columns-height-changing-98-large.mp4"
-              type="video/mp4"
-            />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
@@ -641,10 +646,15 @@ const ProjectList = () => {
                 >
                   {/* Image Card */}
                   <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3 border border-white/5 bg-zinc-900">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700"
+                    {/* The Video Element */}
+                    <video
+                      src={project.video}
+                      poster={project.image} // Shows image while video loads
+                      className="w-full h-full object-cover opacity-80 group-hover/card:scale-110 group-hover/card:opacity-100 transition-all duration-700 ease-out"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
                     />
 
                     {/* Hover Overlay */}
@@ -726,8 +736,8 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-24 px-6 md:px-20 relative">
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="py-24 px-6  relative">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold mb-6">
             {t.contact.title}
@@ -743,17 +753,14 @@ const Contact = () => {
                 href="mailto:hello@example.com"
                 className="text-xl hover:text-primary transition-colors"
               >
-                hello@example.com
+                hal.chung.chingyan.2025@gmail.com
               </a>
             </div>
             <div>
               <h4 className="text-gray-400 font-mono mb-2">Socials</h4>
               <div className="flex gap-4">
                 <a href="#" className="hover:text-primary transition-colors">
-                  LinkedIn
-                </a>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Twitter
+                  GitHub
                 </a>
               </div>
             </div>
@@ -796,7 +803,7 @@ const Contact = () => {
                   name="message"
                   rows="4"
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 focus:outline-none focus:border-primary transition-colors"
-                  placeholder="Tell me about your project..."
+                  placeholder="Tell me about your thought ..."
                 />
               </div>
               <button
@@ -820,7 +827,7 @@ const Contact = () => {
 
 const Footer = () => (
   <footer className="py-8 text-center text-gray-500 text-sm border-t border-white/10">
-    <p>© {new Date().getFullYear()} Your Name. All rights reserved.</p>
+    <p>© {new Date().getFullYear()} Yan. All rights reserved.</p>
   </footer>
 );
 
@@ -840,6 +847,7 @@ function App() {
         <About />
         <FeaturedProject />
         <ProjectList />
+        <SectionSeparator />
         <Contact />
         <Footer />
       </div>

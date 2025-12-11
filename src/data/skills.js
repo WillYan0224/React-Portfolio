@@ -69,4 +69,14 @@ export const DEVTOOL_DATA = [
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
     invert: true,
   },
+  {
+    name: "Canva",
+    icon: "https://www.vectorlogo.zone/logos/canva/canva-icon.svg",
+    invert: false,
+  },
+  {
+    name: "DaVinci Resolve",
+    icon: "/icons/DaVinciResolve.png",
+    invert: false,
+  },
 ];
