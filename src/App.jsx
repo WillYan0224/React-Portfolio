@@ -423,6 +423,19 @@ const About = () => {
                 {t.about.stats.proj}
               </p>
             </div>
+            {/* --- NEW: Field Tags --- */}
+            <div className="flex flex-wrap gap-3">
+              {t.about.tags &&
+                t.about.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-5 py-2 rounded-full border border-white/10 bg-white/5 text-sm font-medium text-gray-300 hover:border-primary hover:text-white hover:bg-primary/10 transition-all cursor-default"
+                  >
+                    {tag}
+                  </span>
+                ))}
+            </div>
+            {/* ----------------------- */}
           </div>
         </motion.div>
 
@@ -647,14 +660,10 @@ const ProjectList = () => {
                   {/* Image Card */}
                   <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3 border border-white/5 bg-zinc-900">
                     {/* The Video Element */}
-                    <video
-                      src={project.video}
-                      poster={project.image} // Shows image while video loads
-                      className="w-full h-full object-cover opacity-80 group-hover/card:scale-110 group-hover/card:opacity-100 transition-all duration-700 ease-out"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700"
                     />
 
                     {/* Hover Overlay */}

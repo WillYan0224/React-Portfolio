@@ -34,45 +34,46 @@ export const TRANSLATIONS = {
       headline_word2: "engineering",
       headline_suffix: "",
       catchphrase: "Crafting digital realms where logic meets imagination.",
-      bio1: "I am a passionate developer with a knack for creating immersive digital experiences. My journey started with game development, which taught me the importance of performance and interaction. Now, I apply those same principles to the web.",
+      bio1: "I am a passionate developer with a knack for creating immersive digital experiences. My journey started with game development, which taught me the importance of performance and interaction. Now, I apply those same principles to other project as well.",
       bio2: "When I'm not coding, you can find me exploring 3D art, playing video games, or learning new skill for engineering.",
       stats: {
         exp: "Years Exp.",
         proj: "Projects",
       },
+      tags: ["CG/Game", "FPGA", "AI/ML", "VFX", "WEB"],
     },
     featured: {
       tag: "Featured Project",
       title: "Unreal Engine5 Dynamic Weather System",
-      desc: "A highlight of my best work involving complex animations and video integration.",
+      desc: "A highlight of my best work involving visual effect and environment integration",
       btn: "View Case Study",
     },
     projects: {
       title: "Selected Works",
       list: [
         {
-          title: "E-Commerce Dashboard",
+          title: "Climbling Mechanic system",
           description:
             "A full-stack dashboard for managing inventory and analytics.",
         },
         {
-          title: "Social Media API",
+          title: "Water visual effect ",
           description: "High performance REST API built with Go and Redis.",
         },
         {
-          title: "AI Image Generator",
+          title: "Top-down RPG using GAS",
           description: "React frontend integrated with OpenAI DALL-E 3.",
         },
         {
-          title: "Travel Booking UI",
+          title: "Niagara VFX",
           description: "Modern UI/UX implementation for a travel agency.",
         },
         {
-          title: "Crypto Wallet",
+          title: "Object Detection Using OpenCV",
           description: "Secure mobile wallet for managing digital assets.",
         },
         {
-          title: "Smart Home API",
+          title: "Data ",
           description: "Centralized control system for smart devices.",
         },
       ],
@@ -126,6 +127,7 @@ export const TRANSLATIONS = {
         exp: "年の経験",
         proj: "プロジェクト",
       },
+      tags: ["CG/Game", "FPGA", "AI/ML", "VFX", "WEB"],
     },
     featured: {
       tag: "注目プロジェクト",
