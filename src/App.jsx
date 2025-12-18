@@ -17,7 +17,6 @@ import { Float, ContactShadows, Edges } from "@react-three/drei";
 import * as THREE from "three";
 import {
   Github,
-  Linkedin,
   ExternalLink,
   X,
   ChevronLeft,
@@ -376,26 +375,22 @@ const About = () => {
         >
           <h2 className="text-primary font-mono mb-4">{t.about.title}</h2>
 
-          {/* --- FIXED HEADLINE STRUCTURE --- */}
+          {/* Headline */}
           <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
             {t.about.headline_prefix && (
               <span className="block mb-1">{t.about.headline_prefix}</span>
             )}
             <span className="block">
               <span className="text-primary">{t.about.headline_word1}</span>
-
               <span className="text-4xl mx-2">
                 {t.about.headline_connector}
               </span>
-
               <span className="text-secondary">{t.about.headline_word2}</span>
-
               {t.about.headline_suffix && (
                 <span> {t.about.headline_suffix}</span>
               )}
             </span>
           </h3>
-          {/* ------------------------------- */}
 
           <div className="mb-8 border-l-4 border-primary pl-6 py-2">
             <p className="text-2xl italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
@@ -410,9 +405,10 @@ const About = () => {
             {t.about.bio2}
           </p>
 
-          <div className="flex gap-8 border-t border-white/10 pt-8">
+          {/* Stats Row */}
+          <div className="flex gap-8 border-t border-white/10 pt-8 mb-8">
             <div>
-              <h4 className="text-3xl font-bold text-white">3+</h4>
+              <h4 className="text-3xl font-bold text-white">4+</h4>
               <p className="text-sm text-gray-500 uppercase tracking-wider">
                 {t.about.stats.exp}
               </p>
@@ -423,22 +419,50 @@ const About = () => {
                 {t.about.stats.proj}
               </p>
             </div>
-            {/* --- NEW: Field Tags --- */}
-            <div className="flex flex-wrap gap-3">
-              {t.about.tags &&
-                t.about.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-5 py-2 rounded-full border border-white/10 bg-white/5 text-sm font-medium text-gray-300 hover:border-primary hover:text-white hover:bg-primary/10 transition-all cursor-default"
-                  >
-                    {tag}
-                  </span>
-                ))}
-            </div>
-            {/* ----------------------- */}
           </div>
+
+          {/* --- TAGS AREA --- */}
+          <div className="space-y-6">
+            {/* 1. Professional Fields */}
+            <div>
+              <h4 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">
+                Focus
+              </h4>
+              <div className="flex flex-wrap gap-3">
+                {t.about.tags &&
+                  t.about.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium text-gray-300 hover:border-primary hover:text-white hover:bg-primary/10 transition-all cursor-default"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+              </div>
+            </div>
+
+            {/* 2. Hobbies / Interests */}
+            <div>
+              <h4 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">
+                {t.about.hobbies.title}
+              </h4>
+              <div className="flex flex-wrap gap-3">
+                {t.about.hobbies.list &&
+                  t.about.hobbies.list.map((hobby, index) => (
+                    <span
+                      key={index}
+                      className="px-4 py-1.5 rounded-full border border-white/5 bg-zinc-800/50 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all cursor-default"
+                    >
+                      {hobby}
+                    </span>
+                  ))}
+              </div>
+            </div>
+          </div>
+          {/* ----------------- */}
         </motion.div>
 
+        {/* Right Side Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -448,11 +472,16 @@ const About = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
           <div className="relative rounded-2xl overflow-hidden aspect-[4/5] border border-white/10">
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000"
-              alt="Profile"
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-            />
+            <video
+              className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-out"
+              autoPlay
+              muted
+              loop
+              playsInline
+            >
+              {/* public/videos folder */}
+              <source src="/videos/vfx.mp4" type="video/mp4" />
+            </video>
           </div>
         </motion.div>
       </div>
@@ -487,14 +516,14 @@ const FeaturedProject = () => {
   return (
     <>
       <section id="work" className="py-24 px-6 md:px-20">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+          <div className="w-full mx-auto max-w-6xl">
             <h3 className="text-primary font-mono mb-2">{t.featured.tag}</h3>
             <h2 className="text-4xl md:text-5xl font-bold">
               {t.featured.title}
             </h2>
           </div>
-          <p className="text-gray-400 max-w-md mt-4 md:mt-0">
+          <p className="text-gray-400 max-w-md mt-4 md:mt-0 self-center">
             {t.featured.desc}
           </p>
         </div>
@@ -510,29 +539,40 @@ const FeaturedProject = () => {
             loop
             playsInline
           >
-            {/* Note: Ensure this file path is correct in your public/videos folder */}
-            <source src="/videos/hero.mp4" type="video/mp4" />
+            {/* public/videos folder */}
+            <source src="/videos/dynamicWeather.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
             <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
               <span className="inline-block py-1 px-3 rounded bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
-                WebGL / Three.js
+                Unreal Engine 5.6
               </span>
               <h3 className="text-3xl md:text-5xl font-bold mb-4 text-white">
-                Neon Cyber Dashboard
+                Dynamic Weather System
               </h3>
               <p className="text-gray-300 mb-8 max-w-xl text-lg leading-relaxed">
-                A futuristic dashboard built with React and Three.js, featuring
-                real-time data visualization, WebGL acceleration, and immersive
-                3D interactions.
+                A Weather System include raining, snowing, switching between day
+                and night.
               </p>
-              <button
-                onClick={openModal}
-                className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-primary hover:text-white transition-all duration-300"
-              >
-                {t.featured.btn} <ExternalLink size={18} />
-              </button>
+
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={openModal}
+                  className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-primary hover:text-white transition-all duration-300"
+                >
+                  {t.featured.btn} <ExternalLink size={18} />
+                </button>
+
+                <a
+                  href=""
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
+                >
+                  <Github size={20} />
+                </a>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -570,7 +610,7 @@ const FeaturedProject = () => {
                 playsInline
               >
                 {/* Ensure this path is correct */}
-                <source src="/videos/hero.mp4" type="video/mp4" />
+                <source src="/videos/dynamicWea.mp4" type="video/mp4" />
                 <source
                   src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-blue-columns-height-changing-98-large.mp4"
                   type="video/mp4"
@@ -585,11 +625,12 @@ const FeaturedProject = () => {
 };
 
 // 7. Project List
+// 7. Project List (Fixed 3x2 Layout with Pagination)
 const ProjectList = () => {
   const { t } = useLanguage();
   const scrollContainerRef = useRef(null);
 
-  // Card dimensions for calculation (Width + Gap)
+  // Card dimensions logic
   // Desktop: 380px width + 24px gap = 404px per unit
   // Mobile: 300px width + 24px gap = 324px per unit
   const getItemWidth = () => {
@@ -599,8 +640,8 @@ const ProjectList = () => {
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
       const { current } = scrollContainerRef;
-      // Scroll by 2 units
-      const scrollAmount = getItemWidth() * 2;
+      // CHANGE: Scroll by 3 units (Full "Page" of 3 columns)
+      const scrollAmount = getItemWidth() * 3;
 
       if (direction === "left") {
         current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
@@ -612,8 +653,12 @@ const ProjectList = () => {
 
   return (
     <section className="py-24 bg-zinc-950 flex justify-center">
-      {/* Squeezed Container */}
-      <div className="min-width px-4">
+      {/* 
+        Constraint Container 
+        max-w-[1250px] is calculated to fit exactly 3 cards + gaps (approx 1200px).
+        This prevents a 4th column from ever appearing, forcing the 7th item to overflow.
+      */}
+      <div className="w-full max-w-[1350px] px-4">
         {/* Header */}
         <div className="flex justify-between items-end mb-8 px-2">
           <h2 className="text-4xl font-bold">{t.projects.title}</h2>
@@ -622,9 +667,9 @@ const ProjectList = () => {
           </div>
         </div>
 
-        {/* --- Layout Container: [Button] [ScrollArea] [Button] --- */}
+        {/* --- Layout Container --- */}
         <div className="flex items-center gap-4">
-          {/* Left Button (Static Position) */}
+          {/* Left Button */}
           <button
             onClick={() => scroll("left")}
             className="hidden md:flex flex-shrink-0 p-3 rounded-full bg-zinc-800 border border-white/10 text-white hover:bg-primary hover:scale-110 transition-all shadow-xl z-10"
@@ -634,18 +679,17 @@ const ProjectList = () => {
           </button>
 
           {/* 
-             2-Row Grid Container 
-             - grid-rows-2: Forces 2 rows height
-             - grid-flow-col: Fills Top-Down, then moves Right (Horizontal Scroll)
-             - overflow-x-auto: Enables scrolling
+             Grid Container 
+             - snap-x snap-mandatory: Forces items to align perfectly when scrolling stops
           */}
           <div
             ref={scrollContainerRef}
-            className="grid grid-rows-2 grid-flow-col gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar w-full"
+            className="grid grid-rows-2 grid-flow-col gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar w-full snap-x snap-mandatory"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {PROJECTS.map((project, index) => {
-              const translatedProject = t.projects.list[index];
+              const translatedProject =
+                t.projects.list[index] || t.projects.list[0]; // Fallback if translation missing for new item
 
               return (
                 <motion.div
@@ -654,19 +698,21 @@ const ProjectList = () => {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3 }}
-                  // Fixed Width is required for horizontal grid flow
-                  className="w-[300px] md:w-[380px] group/card"
+                  // snap-start: Ensures this card snaps to the left edge
+                  className="w-[300px] md:w-[380px] group/card snap-start"
                 >
-                  {/* Image Card */}
+                  {/* Image/Video Card */}
                   <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3 border border-white/5 bg-zinc-900">
-                    {/* The Video Element */}
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700"
+                    <video
+                      src={project.video}
+                      poster={project.image}
+                      className="w-full h-full object-cover opacity-80 group-hover/card:scale-110 group-hover/card:opacity-100 transition-all duration-700 ease-out"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
                     />
 
-                    {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
                       <a
                         href={project.demoUrl}
@@ -691,13 +737,12 @@ const ProjectList = () => {
                   <div className="flex justify-between items-start px-1">
                     <div>
                       <h3 className="text-lg font-bold group-hover/card:text-primary transition-colors">
-                        {translatedProject.title}
+                        {translatedProject?.title || project.title}
                       </h3>
-                      <p className="text-xs text-gray-400 mt-1 line-clamp-1">
-                        {translatedProject.description}
+                      <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                        {translatedProject?.description || project.description}
                       </p>
                     </div>
-                    {/* Category Badge */}
                     <span className="text-[10px] font-bold tracking-wider border border-white/10 bg-white/5 px-2 py-1 rounded text-gray-400 uppercase whitespace-nowrap ml-3">
                       {project.category}
                     </span>
@@ -707,7 +752,7 @@ const ProjectList = () => {
             })}
           </div>
 
-          {/* Right Button (Static Position) */}
+          {/* Right Button */}
           <button
             onClick={() => scroll("right")}
             className="hidden md:flex flex-shrink-0 p-3 rounded-full bg-zinc-800 border border-white/10 text-white hover:bg-primary hover:scale-110 transition-all shadow-xl z-10"
@@ -718,7 +763,6 @@ const ProjectList = () => {
         </div>
       </div>
 
-      {/* Hide Scrollbar Style */}
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -856,7 +900,6 @@ function App() {
         <About />
         <FeaturedProject />
         <ProjectList />
-        <SectionSeparator />
         <Contact />
         <Footer />
       </div>

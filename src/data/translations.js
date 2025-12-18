@@ -18,7 +18,7 @@ export const TRANSLATIONS = {
       title_start: "Building",
       title_highlight: "digital experiences",
       title_end: "that matter.",
-      desc: "I craft CG content and robust game system with a focus on interaction, game experience, and performance.",
+      desc: "I craft interactive CG content and robust game systems with a strong focus on gameplay experience, interaction, and performance.",
       cta: "View My Work",
     },
     separator: {
@@ -33,19 +33,24 @@ export const TRANSLATIONS = {
       headline_connector: "and",
       headline_word2: "engineering",
       headline_suffix: "",
-      catchphrase: "Crafting digital realms where logic meets imagination.",
-      bio1: "I am a passionate developer with a knack for creating immersive digital experiences. My journey started with game development, which taught me the importance of performance and interaction. Now, I apply those same principles to other project as well.",
-      bio2: "When I'm not coding, you can find me exploring 3D art, playing video games, or learning new skill for engineering.",
+      catchphrase: "Creating digital worlds where logic meets imagination.",
+      bio1: "I am a passionate developer driven by the creation of immersive digital experiences. My background in embedded systems provided me with a strong foundation in computer architecture and low-level computation. Building on this foundation, I developed a deep interest in blending low-level engineering with modern creative technologies. I am currently focused on developing interactive CG content and web-based systems.",
+
+      bio2: "When I'm not coding, you can find me exploring 3D art, playing video games, or learning new engineering skills.",
       stats: {
         exp: "Years Exp.",
         proj: "Projects",
       },
-      tags: ["CG/Game", "FPGA", "AI/ML", "VFX", "WEB"],
+      tags: ["3D PROGRAMMING", "3D RENDERING", "FPGA", "AI/ML", "VFX", "WEB"],
+      hobbies: {
+        title: "Interests",
+        list: ["Marketing", "Movies", "Coding", "Traveling", "Coffee"],
+      },
     },
     featured: {
       tag: "Featured Project",
       title: "Unreal Engine5 Dynamic Weather System",
-      desc: "A highlight of my best work involving visual effect and environment integration",
+      desc: "A highlight project showcasing visual effects and environment system integration.",
       btn: "View Case Study",
     },
     projects: {
@@ -54,27 +59,35 @@ export const TRANSLATIONS = {
         {
           title: "Climbling Mechanic system",
           description:
-            "A full-stack dashboard for managing inventory and analytics.",
+            "A flexible climbing system designed for open-world games.",
         },
         {
-          title: "Water visual effect ",
-          description: "High performance REST API built with Go and Redis.",
+          title: "Realistic Water Material",
+          description: "A visually rich and interactive water material.",
         },
         {
           title: "Top-down RPG using GAS",
-          description: "React frontend integrated with OpenAI DALL-E 3.",
+          description:
+            "A top-down RPG project built with Unreal Engine's Gameplay Ability System.",
         },
         {
           title: "Niagara VFX",
-          description: "Modern UI/UX implementation for a travel agency.",
+          description:
+            "A collection of Niagara visual effects designed for games.",
         },
         {
           title: "Object Detection Using OpenCV",
-          description: "Secure mobile wallet for managing digital assets.",
+          description:
+            "Real-time object detection and data extraction from video streams.",
         },
         {
-          title: "Data ",
-          description: "Centralized control system for smart devices.",
+          title: "Consoles Arts",
+          description: "A visual art project inspired by The Matrix.",
+        },
+        {
+          title: "Object training using CNN ",
+          description:
+            "Projects involving data analysis and machine learning model training.",
         },
       ],
     },
@@ -128,6 +141,16 @@ export const TRANSLATIONS = {
         proj: "プロジェクト",
       },
       tags: ["CG/Game", "FPGA", "AI/ML", "VFX", "WEB"],
+      hobbies: {
+        title: "趣味・関心",
+        list: [
+          "マーケティング",
+          "映画鑑賞",
+          "コーディング",
+          "旅行",
+          "コーヒー",
+        ],
+      },
     },
     featured: {
       tag: "注目プロジェクト",
@@ -157,6 +180,10 @@ export const TRANSLATIONS = {
         {
           title: "暗号資産ウォレット",
           description: "デジタル資産を管理するための安全なモバイルウォレット。",
+        },
+        {
+          title: "スマートホームAPI",
+          description: "スマートデバイスのための集中管理システム。",
         },
         {
           title: "スマートホームAPI",
