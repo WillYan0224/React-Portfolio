@@ -1,16 +1,78 @@
-# React + Vite
+# React Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the source code for my personal portfolio website, built with React and Vite.  
+The site showcases my work and interests in web development, game development, CG programming, VFX, and image processing.
 
-Currently, two official plugins are available:
+Live site:  
+https://react-portfolio-4ss.pages.dev
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This portfolio is designed as a modern, interactive showcase with a strong focus on visual presentation, performance, and smooth user experience.  
+It includes video-based project demonstrations, animated UI elements, and a lightweight 3D background.
 
-## Expanding the ESLint configuration
+The site supports bilingual content (English / Japanese) and is deployed globally via Cloudflare Pages.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Features
+
+- React + Vite for fast development and optimized production builds
+- Bilingual language support (EN / JP)
+- 3D animated background using three.js and @react-three/fiber
+- Smooth UI and page animations with Framer Motion
+- Video-based project showcases
+- Contact form powered by EmailJS
+- Global deployment on Cloudflare Pages
+
+---
+
+## Tech Stack
+
+### Frontend
+- React
+- Vite
+- Tailwind CSS
+- Framer Motion
+
+### 3D / Graphics
+- three.js
+- @react-three/fiber
+- @react-three/drei
+
+### Infrastructure
+- Cloudflare Pages
+- GitHub (CI/CD via Pages)
+- EmailJS
+
+---
+
+## Project Structure
+
+```text
+src/
+ ├─ components/        # UI sections and reusable components
+ ├─ data/              # Skills, projects, translations
+ ├─ assets/            # Images and static assets
+ ├─ App.jsx
+ └─ main.jsx
+
+public/
+ ├─ videos/            # Demo and showcase videos
+ └─ icon.svg           # Custom favicon
+```
+
+## Author
+
+
+William Chingyan Chung
+GitHub: https://github.com/WillYan0224
+
+Portfolio: https://react-portfolio-4ss.pages.dev
+
+### License
+
+This project is intended for personal portfolio use.
+All showcased works, videos, and assets remain the property of their respective owners.
