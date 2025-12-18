@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect x="48" y="48" width="416" height="416" rx="128" fill="#000"></rect>
+
+  <path fill="#fff" fill-rule="evenodd" d="
+    M176 124
+    H286
+    Q376 124 376 212
+    Q376 300 286 300
+    H252
+    V392
+    H176
+    Z
+
+    M252 184
+    V244
+    H286
+    Q316 244 316 212
+    Q316 184 286 184
+    Z
+  "></path>
+</svg>
