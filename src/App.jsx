@@ -565,7 +565,7 @@ const FeaturedProject = () => {
                 </button>
 
                 <a
-                  href=""
+                  href="https://github.com/WillYan0224/DynamicSky"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
@@ -625,7 +625,6 @@ const FeaturedProject = () => {
 };
 
 // 7. Project List
-// 7. Project List (Fixed 3x2 Layout with Pagination)
 const ProjectList = () => {
   const { t } = useLanguage();
   const scrollContainerRef = useRef(null);
@@ -774,23 +773,41 @@ const ProjectList = () => {
 
 // 8. Contact
 const Contact = () => {
-  const { t } = useLanguage(); // <--- Use translations
+  const { t } = useLanguage();
   const form = useRef();
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(""); // 'sending', 'success', 'error'
 
   const sendEmail = (e) => {
     e.preventDefault();
     setStatus("sending");
-    // emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', form.current, 'YOUR_PUBLIC_KEY')
-    setTimeout(() => {
-      setStatus("success");
-      e.target.reset();
-    }, 1500);
+
+    // REPLACE THESE VALUES WITH YOUR ACTUAL EMAILJS KEYS
+    const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
+    const TEMPLATE_ID = import.meta.env.VITE_TEMPLATE_ID;
+    const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
+
+    emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY).then(
+      (result) => {
+        console.log(result.text);
+        setStatus("success");
+        e.target.reset(); // Clear the form
+
+        // Reset button text after 3 seconds
+        setTimeout(() => setStatus(""), 3000);
+      },
+      (error) => {
+        console.log(error.text);
+        setStatus("error");
+
+        // Reset button text after 3 seconds
+        setTimeout(() => setStatus(""), 3000);
+      }
+    );
   };
 
   return (
-    <section id="contact" className="py-24 px-6  relative">
-      <div className="max-w-5xl mx-auto">
+    <section id="contact" className="py-24 px-6 relative">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold mb-6">
             {t.contact.title}
@@ -799,12 +816,13 @@ const Contact = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-12">
+          {/* Left Column: Contact Details */}
           <div className="md:col-span-1 space-y-8">
             <div>
               <h4 className="text-gray-400 font-mono mb-2">Email</h4>
               <a
-                href="mailto:hello@example.com"
-                className="text-xl hover:text-primary transition-colors"
+                href="mailto:hal.chung.chingyan.2025@gmail.com"
+                className="text-lg md:text-xl hover:text-primary transition-colors break-words"
               >
                 hal.chung.chingyan.2025@gmail.com
               </a>
@@ -812,13 +830,19 @@ const Contact = () => {
             <div>
               <h4 className="text-gray-400 font-mono mb-2">Socials</h4>
               <div className="flex gap-4">
-                <a href="#" className="hover:text-primary transition-colors">
-                  GitHub
+                <a
+                  href="https://github.com/WillYan0224"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  <Github size={24} />
                 </a>
               </div>
             </div>
           </div>
 
+          {/* Right Column: Form */}
           <div className="md:col-span-2 bg-zinc-900 p-8 rounded-2xl border border-white/5">
             <form ref={form} onSubmit={sendEmail} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
@@ -859,15 +883,22 @@ const Contact = () => {
                   placeholder="Tell me about your thought ..."
                 />
               </div>
+
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="w-full bg-white text-black font-bold py-4 rounded-lg hover:bg-gray-200 transition-all disabled:opacity-50"
+                className={`w-full font-bold py-4 rounded-lg transition-all disabled:opacity-50 ${
+                  status === "error"
+                    ? "bg-red-500 text-white hover:bg-red-600"
+                    : "bg-white text-black hover:bg-gray-200"
+                }`}
               >
                 {status === "sending"
                   ? t.contact.btn_sending
                   : status === "success"
                   ? t.contact.btn_sent
+                  : status === "error"
+                  ? "Error. Try again."
                   : t.contact.btn_send}
               </button>
             </form>

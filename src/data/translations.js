@@ -44,7 +44,15 @@ export const TRANSLATIONS = {
       tags: ["3D PROGRAMMING", "3D RENDERING", "FPGA", "AI/ML", "VFX", "WEB"],
       hobbies: {
         title: "Interests",
-        list: ["Marketing", "Movies", "Coding", "Traveling", "Coffee"],
+        list: [
+          "Marketing",
+          "Dramas/Movies",
+          "Coding",
+          "New Tech",
+          "AI",
+          "Coffee",
+          "Pop Music",
+        ],
       },
     },
     featured: {
@@ -85,9 +93,13 @@ export const TRANSLATIONS = {
           description: "A visual art project inspired by The Matrix.",
         },
         {
-          title: "Object training using CNN ",
+          title: "Object training using CNN",
           description:
             "Projects involving data analysis and machine learning model training.",
+        },
+        {
+          title: "For reserve",
+          description: "Pending... ",
         },
       ],
     },
@@ -105,9 +117,9 @@ export const TRANSLATIONS = {
   jp: {
     nav: {
       work: "制作実績",
-      about: "私について",
+      about: "自己紹介",
       contact: "お問い合わせ",
-      btn: "連絡する",
+      btn: "Contact",
     },
     hero: {
       greeting: "こんにちは、私は",
@@ -116,88 +128,108 @@ export const TRANSLATIONS = {
         "ゲームデベロッパー",
         "CGプログラマ",
         "画像処理エンジニア",
-        "VFX デザイナー",
+        "VFXデザイナー",
       ],
       title_start: "",
       title_highlight: "デジタル体験",
-      title_end: "を創造します。",
-      desc: "インタラクション、デザイン、パフォーマンスに重点を置いたモダンなWebサイトと堅牢なアプリケーションを構築します。",
-      cta: "実績を見る",
+      title_end: "を構築します。",
+      desc: "ゲーム体験、インタラクション、パフォーマンスを重視し、インタラクティブなCGコンテンツおよび堅牢なゲームシステムを開発しています。",
+      cta: "制作実績を見る",
     },
-    separator: { subtitle: "開発者", title: "スクリーンの裏側" },
+    separator: {
+      subtitle: "AI時代",
+      title: "情報 × コンテンツ × エンジニアリング",
+    },
     about: {
-      title: "自己紹介",
-      // New Structure:
-      headline_prefix: "", // No prefix needed in JP
-      headline_word1: "デザイン",
+      title: "私について",
+      headline_prefix: "",
+      headline_word1: "コンテンツ",
       headline_connector: "と",
       headline_word2: "エンジニアリング",
-      headline_suffix: "の架け橋に。",
-      catchphrase: "論理と想像が出会うデジタル領域を構築する。",
-      bio1: "没入感のあるデジタル体験を創造することに情熱を注ぐ開発者です。ゲーム開発からキャリアをスタートし、そこでパフォーマンスとインタラクションの重要性を学びました。現在はその原則をWebに適用しています。",
-      bio2: "コーディング以外では、3Dアートの探求、FPSゲーム、またはAwwwardsでのUIパターンの分析を行っています。",
+      headline_suffix: "をつなぐ。",
+      catchphrase: "論理と想像力が交差するデジタル世界を創る。",
+      bio1: "没入感のあるデジタル体験の創造を原動力とする開発者です。組み込みシステム分野でのバックグラウンドを通じて、コンピュータアーキテクチャや低レベル演算に関する確かな基盤を築いてきました。その経験をもとに、低レベルエンジニアリングと現代的なクリエイティブ技術を融合させる分野に強い関心を持つようになりました。現在は、インタラクティブなCGコンテンツおよびWebベースのシステム開発に注力しています。",
+      bio2: "コーディング以外では、3Dアートの制作、ゲームプレイ、新しいエンジニアリング技術の学習を楽しんでいます。",
       stats: {
-        exp: "年の経験",
+        exp: "経験年数",
         proj: "プロジェクト",
       },
-      tags: ["CG/Game", "FPGA", "AI/ML", "VFX", "WEB"],
+      tags: [
+        "3Dプログラミング",
+        "3Dレンダリング",
+        "FPGA",
+        "AI/ML",
+        "VFX",
+        "WEB",
+      ],
       hobbies: {
-        title: "趣味・関心",
+        title: "興味・関心",
         list: [
           "マーケティング",
-          "映画鑑賞",
+          "ドラマ・映画鑑賞",
           "コーディング",
-          "旅行",
+          "最新技術",
+          "AI",
           "コーヒー",
+          "ポップミュージック",
         ],
       },
     },
     featured: {
       tag: "注目プロジェクト",
-      title: "インタラクティブ体験",
-      desc: "複雑なアニメーションと動画統合を含む、私の最高の作品のハイライト。",
-      btn: "ケーススタディを見る",
+      title: "Unreal Engine 5 動的天候システム",
+      desc: "ビジュアルエフェクトと環境システムの統合を実現した代表的なプロジェクトです。",
+      btn: "詳細を見る",
     },
     projects: {
-      title: "制作実績一覧",
+      title: "制作実績",
       list: [
         {
-          title: "ECダッシュボード",
-          description: "在庫と分析を管理するためのフルスタックダッシュボード。",
+          title: "クライミングメカニクスシステム",
+          description:
+            "オープンワールドゲーム向けに設計された柔軟なクライミングシステム",
         },
         {
-          title: "SNS API",
-          description: "GoとRedisで構築された高性能REST API。",
+          title: "リアルな水面マテリアル",
+          description: "視覚表現とインタラクションを両立した水面マテリアル",
         },
         {
-          title: "AI画像生成",
-          description: "OpenAI DALL-E 3と統合されたReactフロントエンド。",
+          title: "GASを用いたトップダウンRPG",
+          description:
+            "Unreal EngineのGameplay Ability Systemを活用したトップダウンRPG",
         },
         {
-          title: "旅行予約UI",
-          description: "旅行代理店向けのモダンなUI/UX実装。",
+          title: "Niagara VFX",
+          description: "ゲーム向けに制作したNiagaraビジュアルエフェクト集",
         },
         {
-          title: "暗号資産ウォレット",
-          description: "デジタル資産を管理するための安全なモバイルウォレット。",
+          title: "OpenCVによる物体検出",
+          description:
+            "映像ストリームからリアルタイムで物体検出とデータ抽出を行うシステム。",
         },
         {
-          title: "スマートホームAPI",
-          description: "スマートデバイスのための集中管理システム。",
+          title: "コンセプトアート作品",
+          description:
+            "『マトリックス』に着想を得たビジュアルアートプロジェクト",
         },
         {
-          title: "スマートホームAPI",
-          description: "スマートデバイスのための集中管理システム。",
+          title: "CNNを用いた物体認識",
+          description:
+            "データ分析および機械学習モデルの学習を行ったプロジェクト",
+        },
+        {
+          title: "準備中",
+          description: "近日公開予定",
         },
       ],
     },
     contact: {
-      title: "一緒に作りましょう",
-      subtitle: "プロジェクトのご相談はこちらから。",
+      title: "一緒に制作しませんか",
+      subtitle: "ご質問やご相談がありましたら、お気軽にご連絡ください",
       name: "お名前",
       email: "メールアドレス",
       message: "メッセージ",
-      btn_send: "送信する",
+      btn_send: "送信",
       btn_sending: "送信中...",
       btn_sent: "送信完了！",
     },
