@@ -32,12 +32,12 @@ export const PROJECTS = [
   {
     id: 4,
 
-    category: "Unreal Engine",
-    image: "photos/portal.jpg",
+    category: "Machine Learning",
+    image: "photos/stonks.jpg",
     video: "null",
 
-    gitUrl: "https://github.com/WillYan0224/NiagaraVFX",
-    demoUrl: "https://github.com/WillYan0224/NiagaraVFX",
+    gitUrl: "https://github.com/WillYan0224/usd_jpy_forecast",
+    demoUrl: "https://github.com/WillYan0224/usd_jpy_forecast",
   },
   {
     id: 5,
@@ -75,6 +75,16 @@ export const PROJECTS = [
   },
   {
     id: 8,
+
+    category: "Unreal Engine",
+    image: "photos/portal.jpg",
+    video: "null",
+
+    gitUrl: "https://github.com/WillYan0224/NiagaraVFX",
+    demoUrl: "https://github.com/WillYan0224/NiagaraVFX",
+  },
+  {
+    id: 9,
 
     category: "Pending...",
     image: "null",

@@ -79,9 +79,8 @@ export const TRANSLATIONS = {
             "A top-down RPG project built with Unreal Engine's Gameplay Ability System.",
         },
         {
-          title: "Niagara VFX",
-          description:
-            "A collection of Niagara visual effects designed for games.",
+          title: "Time-Series Machine Learning USD/JPY",
+          description: "An end-to-end USD/JPY (JPY=X) forecasting system",
         },
         {
           title: "Object Detection Using OpenCV",
@@ -96,6 +95,11 @@ export const TRANSLATIONS = {
           title: "Object training using CNN",
           description:
             "Projects involving data analysis and machine learning model training.",
+        },
+        {
+          title: "Niagara VFX",
+          description:
+            "A collection of Niagara visual effects designed for games.",
         },
         {
           title: "For reserve",
@@ -199,8 +203,9 @@ export const TRANSLATIONS = {
             "Unreal EngineのGameplay Ability Systemを活用したトップダウンRPG",
         },
         {
-          title: "Niagara VFX",
-          description: "ゲーム向けに制作したNiagaraビジュアルエフェクト集",
+          title: "時系列機械学習 USD/JPY",
+          description:
+            "USD/JPY（JPY=X）を対象としたエンドツーエンドの為替予測システム",
         },
         {
           title: "OpenCVによる物体検出",
@@ -216,6 +221,10 @@ export const TRANSLATIONS = {
           title: "CNNを用いた物体認識",
           description:
             "データ分析および機械学習モデルの学習を行ったプロジェクト",
+        },
+        {
+          title: "Niagara VFX",
+          description: "ゲーム向けに制作したNiagaraビジュアルエフェクト集",
         },
         {
           title: "準備中",
