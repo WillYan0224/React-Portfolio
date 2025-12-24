@@ -32,20 +32,17 @@ The site supports bilingual content (English / Japanese) and is deployed globall
 ## Tech Stack
 
 ### Frontend
-
 - React
 - Vite
 - Tailwind CSS
 - Framer Motion
 
 ### 3D / Graphics
-
 - three.js
 - @react-three/fiber
 - @react-three/drei
 
 ### Infrastructure
-
 - Cloudflare Pages
 - GitHub (CI/CD via Pages)
 - EmailJS
@@ -68,6 +65,7 @@ public/
 ```
 
 ## Author
+
 
 William Chingyan Chung
 GitHub: https://github.com/WillYan0224
