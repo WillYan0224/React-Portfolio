@@ -520,16 +520,12 @@ const About = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
           <div className="relative rounded-2xl overflow-hidden aspect-[4/5] border border-white/10">
-            <video
+            <img
+              src="/photos/HKport_001.jpg"
+              alt=""
               className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-out"
-              autoPlay
-              muted
-              loop
-              playsInline
-            >
-              {/* public/videos folder */}
-              <source src="/videos/vfx.mp4" type="video/mp4" />
-            </video>
+              loading="lazy"
+            />
           </div>
         </motion.div>
       </div>

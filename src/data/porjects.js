@@ -78,7 +78,7 @@ export const PROJECTS = [
 
     category: "Unreal Engine",
     image: "photos/portal.jpg",
-    video: "null",
+    video: "videos/vfx.mp4",
 
     gitUrl: "https://github.com/WillYan0224/NiagaraVFX",
     demoUrl: "https://github.com/WillYan0224/NiagaraVFX",
