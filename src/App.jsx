@@ -36,25 +36,32 @@ import { TRANSLATIONS } from "./data/translations";
 // ** ADDED MISSING PROJECTS DATA **
 
 // --- COMPONENTS ---
-
+// 1. Navigation
 // 1. Navigation
 const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
   return (
-    <nav className="sticky top-0 w-full p-6 flex justify-between items-center z-50 bg-black/20 backdrop-blur-md text-white">
-      <div className="text-2xl font-bold tracking-tighter">PORTFOLIO.</div>
-      <div className="hidden md:flex gap-8 font-medium items-center">
-        <a href="#work" className="hover:text-primary transition-colors">
-          {t.nav.work}
-        </a>
+    <nav className="sticky top-0 w-full p-6 grid grid-cols-3 items-center z-50 bg-black/20 backdrop-blur-md text-white">
+      {/* Left */}
+      <div className="justify-self-start text-2xl font-bold tracking-tighter">
+        PORTFOLIO.
+      </div>
+
+      {/* Center */}
+      <div className="justify-self-center hidden md:flex gap-8 font-medium items-center">
         <a href="#about" className="hover:text-primary transition-colors">
           {t.nav.about}
+        </a>
+        <a href="#work" className="hover:text-primary transition-colors">
+          {t.nav.work}
         </a>
         <a href="#contact" className="hover:text-primary transition-colors">
           {t.nav.contact}
         </a>
       </div>
-      <div className="hidden md:flex items-center gap-6">
+
+      {/* Right */}
+      <div className="justify-self-end hidden md:flex items-center gap-6">
         <div className="flex items-center gap-2 border-l border-white/20 pl-6 ml-2">
           <button
             onClick={() => setLanguage("en")}
@@ -78,13 +85,33 @@ const Navbar = () => {
             JP
           </button>
         </div>
+
         <a
           href="#contact"
           className="relative hidden md:inline-flex h-12 overflow-hidden rounded-full p-[2px] focus:outline-none group"
         >
           <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]" />
-          <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-black/90 px-6 py-1 text-sm font-bold text-white backdrop-blur-3xl transition-colors group-hover:bg-zinc-900 group-hover:text-primary">
-            {t.nav.btn}
+          <span
+            className="
+        relative inline-flex h-full w-full items-center justify-center
+        overflow-hidden rounded-full bg-black/90 px-8 py-1
+        text-sm font-medium text-white backdrop-blur-3xl
+        transition-colors duration-500 ease-out
+        group-hover:text-white
+      "
+          >
+            {/* Glow wipe */}
+            <span
+              className="
+          absolute inset-0
+          -translate-x-full group-hover:translate-x-0
+          transition-transform duration-700 ease-out
+          opacity-60
+          bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]
+          blur-lg
+        "
+            />
+            <span className="relative z-10">{t.nav.btn}</span>
           </span>
         </a>
       </div>
@@ -254,8 +281,29 @@ const Hero = () => {
               className="relative inline-flex h-14 overflow-hidden rounded-lg p-[2px] focus:outline-none group"
             >
               <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]" />
-              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg bg-black/90 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-colors group-hover:bg-zinc-900 group-hover:text-primary">
-                {t.hero.cta}
+              {/* Inner layer */}
+              <span
+                className="
+        relative inline-flex h-full w-full items-center justify-center
+        overflow-hidden rounded-lg bg-black/90 px-8 py-1
+        text-sm font-medium text-white backdrop-blur-3xl
+        transition-colors duration-500 ease-out
+        group-hover:text-white
+      "
+              >
+                {/* Glow wipe */}
+                <span
+                  className="
+          absolute inset-0
+          -translate-x-full group-hover:translate-x-0
+          transition-transform duration-700 ease-out
+          opacity-60
+          bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]
+          blur-lg
+        "
+                />
+
+                <span className="relative z-10">{t.hero.cta}</span>
               </span>
             </a>
           </div>
