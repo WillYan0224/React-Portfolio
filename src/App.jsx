@@ -37,7 +37,6 @@ import { TRANSLATIONS } from "./data/translations";
 
 // --- COMPONENTS ---
 // 1. Navigation
-// 1. Navigation
 const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
   return (
@@ -187,8 +186,8 @@ const GeometricBackground = () => {
         Math.random() > 0.5
           ? "#6366f1"
           : Math.random() > 0.5
-          ? "#a855f7"
-          : "#ffffff",
+            ? "#a855f7"
+            : "#ffffff",
       speed: Math.random() * 0.5 + 0.2,
     }));
   }, []);
@@ -323,7 +322,7 @@ const TechMarquee = () => {
       {/* --- ROW 1: Scrolling LEFT --- */}
       <motion.div
         className="flex whitespace-nowrap"
-        animate={{ x: [0, -1035] }} // -1035 is approx width of one set of data. Adjust if gap changes.
+        animate={{ x: [0, -1035] }} // -1035 is approx width of one set of data. Adjust this if gap changes.
         transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
       >
         {/* Repeating 4 times to ensure no gaps on wide screens */}
@@ -346,7 +345,7 @@ const TechMarquee = () => {
                 {skill.name}
               </span>
             </div>
-          )
+          ),
         )}
       </motion.div>
 
@@ -471,7 +470,6 @@ const About = () => {
 
           {/* --- TAGS AREA --- */}
           <div className="space-y-6">
-            {/* 1. Professional Fields */}
             <div>
               <h4 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">
                 Focus
@@ -489,7 +487,7 @@ const About = () => {
               </div>
             </div>
 
-            {/* 2. Hobbies / Interests */}
+            {/* Hobbies / Interests */}
             <div>
               <h4 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">
                 {t.about.hobbies.title}
@@ -534,131 +532,170 @@ const About = () => {
 };
 
 // 6. Featured Project
-const FeaturedProject = () => {
-  const { t } = useLanguage(); // <--- Added translation support
-  const [isOpen, setIsOpen] = useState(false);
+const FeaturedProjects = () => {
+  const PROJECT_TITLE_STYLES = {
+    gold: "text-[#F5C77A] drop-shadow-[0_0_10px_rgba(245,199,122,0.3)]",
+    rose: "text-rose-400 drop-shadow-[0_0_10px_rgba(251,113,133,0.35)]",
+    blue: "text-sky-400 drop-shadow-[0_0_10px_rgba(56,189,248,0.35)]",
+    violet: "text-violet-400 drop-shadow-[0_0_10px_rgba(167,139,250,0.35)]",
+  };
+
+  const { t } = useLanguage();
+  const [activeProject, setActiveProject] = useState(null);
   const videoRef = useRef(null);
 
-  const openModal = () => {
-    setIsOpen(true);
+  const openModal = (project) => {
+    setActiveProject(project);
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
         videoRef.current.play().catch(() => {});
       }
-    }, 0);
+    }, 50);
   };
 
   const closeModal = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-    setIsOpen(false);
+    if (videoRef.current) videoRef.current.pause();
+    setActiveProject(null);
   };
 
   return (
     <>
-      <section id="work" className="py-24 px-6 md:px-20">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-          <div className="w-full mx-auto max-w-6xl">
-            <h3 className="text-primary font-mono mb-2">{t.featured.tag}</h3>
-            <h2 className="text-4xl md:text-5xl font-bold">
-              {t.featured.title}
-            </h2>
-          </div>
-          <p className="text-gray-400 max-w-md mt-4 md:mt-0 self-center">
-            {t.featured.desc}
-          </p>
-        </div>
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          transition={{ duration: 0.5 }}
-          className="relative aspect-video bg-zinc-800 rounded-2xl overflow-hidden group border border-white/10 shadow-2xl  w-full  mx-auto max-w-7xl"
-        >
-          <video
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700 ease-out"
-            autoPlay
-            muted
-            loop
-            playsInline
+      <section
+        id="work"
+        className="py-32 px-6 md:px-20 bg-black relative overflow-hidden"
+      >
+        {/* Ambient Background Glows */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-4"
           >
-            {/* public/videos folder */}
-            <source src="/videos/dynamicWeather.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
-            <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-              <span className="inline-block py-1 px-3 rounded bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4 border border-primary/20">
-                Unreal Engine 5.6
-              </span>
-              <h3 className="text-3xl md:text-5xl font-bold mb-4 text-white">
-                Dynamic Weather System
-              </h3>
-              <p className="text-gray-300 mb-8 max-w-xl text-lg leading-relaxed">
-                A Weather System include raining, snowing, switching between day
-                and night.
-              </p>
+            <h3 className="text-primary font-mono text-sm tracking-[0.4em] uppercase">
+              {t.featured_tag || "Featured Systems"}
+            </h3>
+            <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-white ">
+              Selected Works
+            </h2>
+          </motion.div>
+        </div>
 
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={openModal}
-                  className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-primary hover:text-white transition-all duration-300"
-                >
-                  {t.featured.btn} <ExternalLink size={18} />
-                </button>
+        <div className="max-w-6xl mx-auto space-y-32 md:space-y-48">
+          {t.featured.map((project, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8 }}
+                className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-8 md:gap-16`}
+              >
+                {/* Visual Side */}
+                <div className="w-full md:w-3/5 group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                  <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
+                    <video
+                      className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    >
+                      <source src={project.video} type="video/mp4" />
+                    </video>
+                    {/* Inner Gradient Shadow */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                  </div>
+                </div>
 
-                <a
-                  href="https://github.com/WillYan0224/DynamicSky"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
-                >
-                  <Github size={20} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+                {/* Content Side */}
+                <div className="w-full md:w-2/5 space-y-6">
+                  <div className="flex flex-wrap gap-2">
+                    {/* Add tags to translations for specific tools */}
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-primary">
+                      {project.tag}
+                    </span>
+                  </div>
+
+                  <h3
+                    className={`
+                     text-3xl md:text-4xl font-bold tracking-tight
+                      ${PROJECT_TITLE_STYLES[project.theme] || "text-white"}`}
+                  >
+                    {project.title}
+                  </h3>
+
+                  <p className="text-gray-400 text-lg leading-relaxed font-light">
+                    {project.desc}
+                  </p>
+
+                  <div className="flex items-center gap-5 pt-4">
+                    <button
+                      onClick={() => openModal(project)}
+                      className="group relative flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-bold text-sm transition-all hover:pr-10 active:scale-95"
+                    >
+                      <span>{project.btn}</span>
+                      <Play
+                        size={16}
+                        className="fill-current group-hover:translate-x-1 transition-transform"
+                      />
+                    </button>
+
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-4 bg-zinc-900 border border-white/10 rounded-full text-white hover:border-primary/50 hover:text-primary transition-all active:scale-90"
+                    >
+                      <Github size={22} />
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </section>
 
-      {/* Modal */}
+      {/* Reusable Modal Component */}
       <AnimatePresence>
-        {isOpen && (
+        {activeProject && (
           <motion.div
-            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur"
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 backdrop-blur-md p-4 md:p-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeModal}
           >
             <motion.div
-              className="relative w-full max-w-5xl aspect-video"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-6xl aspect-video rounded-2xl overflow-hidden bg-black shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={closeModal}
-                className="absolute -top-10 right-0 text-white/70 hover:text-white"
+                className="absolute top-6 right-6 z-50 p-2 bg-black/50 hover:bg-white/10 rounded-full text-white transition-colors"
               >
-                <X size={28} />
+                <X size={24} />
               </button>
+
               <video
                 ref={videoRef}
-                className="w-full h-full rounded-xl shadow-2xl"
+                className="w-full h-full"
                 controls
                 autoPlay
-                muted
                 playsInline
               >
-                {/* Ensure this path is correct */}
-                <source src="/videos/dynamicWea.mp4" type="video/mp4" />
-                <source
-                  src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-blue-columns-height-changing-98-large.mp4"
-                  type="video/mp4"
-                />
+                <source src={activeProject.modalVideo} type="video/mp4" />
               </video>
             </motion.div>
           </motion.div>
@@ -845,7 +882,7 @@ const Contact = () => {
 
         // Reset button text after 3 seconds
         setTimeout(() => setStatus(""), 3000);
-      }
+      },
     );
   };
 
@@ -940,10 +977,10 @@ const Contact = () => {
                 {status === "sending"
                   ? t.contact.btn_sending
                   : status === "success"
-                  ? t.contact.btn_sent
-                  : status === "error"
-                  ? "Error. Try again."
-                  : t.contact.btn_send}
+                    ? t.contact.btn_sent
+                    : status === "error"
+                      ? "Error. Try again."
+                      : t.contact.btn_send}
               </button>
             </form>
           </div>
@@ -973,7 +1010,7 @@ function App() {
         <TechMarquee />
         <SectionSeparator />
         <About />
-        <FeaturedProject />
+        <FeaturedProjects />
         <ProjectList />
         <Contact />
         <Footer />

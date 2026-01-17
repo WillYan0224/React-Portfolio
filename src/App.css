@@ -49,7 +49,8 @@
 .neon-gradient-text {
   background-size: 200% 200%;
   animation: neon-gradient 4s ease-in-out infinite;
-  text-shadow: 0 0 6px rgba(129, 140, 248, 0.8),
+  text-shadow:
+    0 0 6px rgba(129, 140, 248, 0.8),
     /* primary glow */ 0 0 14px rgba(168, 85, 247, 0.9),
     /* secondary glow */ 0 0 28px rgba(168, 85, 247, 0.6); /* outer halo */
 }
@@ -60,4 +61,9 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.project-title {
+  color: #8b8cff;
+  text-shadow: 0 0 8px rgba(139, 140, 255, 0.35);
 }
