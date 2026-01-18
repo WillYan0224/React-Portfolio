@@ -33,12 +33,9 @@ export const TRANSLATIONS = {
       headline_word2: "engineering",
       headline_suffix: "",
       catchphrase: "Creating digital worlds where logic meets imagination.",
-      bio1: "I am a developer driven by the creation of interactive digital experiences. With a background in embedded systems, I built a strong foundation in computer architecture, low-level computation, and performance-oriented design. Building on this foundation, I focus on developing interactive systems that blend real-time graphics, data processing, and modern software engineering.",
-      bio2: "My work spans real-time 3D, game systems, data visualization, and web-based applications. Outside of coding, I enjoy exploring 3D art, playing video games, and learning new engineering technologies.",
-      stats: {
-        exp: "Years Exp.",
-        proj: "Projects",
-      },
+      bio1: "I am a developer driven by the creation of interactive digital experiences. With a background in embedded systems, I built a strong foundation in computer architecture, low-level computation, and performance-oriented design.",
+      bio2: "My work spans real-time 3D, game systems, data visualization, and web-based applications.",
+      stats: { exp: "Years Exp.", proj: "Projects" },
       tags: [
         "INTERACTIVE SYSTEMS",
         "REAL-TIME 3D",
@@ -60,6 +57,7 @@ export const TRANSLATIONS = {
         ],
       },
     },
+    featured_tag: "Featured Systems",
     featured: [
       {
         tag: "Cesium(Web) + Python",
@@ -75,7 +73,7 @@ export const TRANSLATIONS = {
         tag: "Unreal Engine 5.6",
         title: "Dynamic Weather System",
         theme: "rose",
-        desc: "A Weather System include raining, snowing, switching between day and night.",
+        desc: "A high-performance environment system featuring real-time precipitation, accumulation, and dynamic day-night cycle transitions.",
         video: "/videos/dynamicWeather.mp4",
         modalVideo: "/videos/dynamicWea.mp4",
         github: "https://github.com/WillYan0224/DynamicSky",
@@ -88,43 +86,38 @@ export const TRANSLATIONS = {
         {
           title: "Satellite Finder",
           description:
-            "A real-time satellite tracker built with Python + web APIs + Cesium for interactive visualization.",
+            "A real-time satellite tracker built with Python + web APIs + Cesium.",
         },
         {
-          title: "Time-Series Machine Learning USD/JPY",
-          description: "An end-to-end USD/JPY (JPY=X) forecasting system.",
+          title: "Time-Series ML",
+          description: "An end-to-end USD/JPY forecasting system.",
         },
         {
-          title: "Object Detection Using OpenCV",
-          description:
-            "Real-time object detection and data extraction from video streams.",
+          title: "OpenCV Detection",
+          description: "Real-time object detection and data extraction.",
         },
         {
-          title: "Unreal Engine 5 Dynamic Weather System",
-          description:
-            "A real-time environment system integrating VFX and gameplay-ready controls.",
+          title: "Dynamic Weather",
+          description: "A real-time environment system integrating VFX.",
         },
         {
-          title: "Climbing Mechanic System",
-          description:
-            "A flexible climbing system designed for open-world games.",
+          title: "Climbing System",
+          description: "A flexible climbing system for open-world games.",
         },
         {
-          title: "Top-down RPG using GAS",
-          description:
-            "A top-down RPG project built with Unreal Engine's Gameplay Ability System.",
+          title: "Top-down RPG",
+          description: "Built with Unreal Engine's Gameplay Ability System.",
         },
         {
-          title: "Realistic Water Material",
+          title: "Realistic Water",
           description: "A visually rich and interactive water material.",
         },
         {
           title: "Niagara VFX",
-          description:
-            "A collection of Niagara visual effects designed for games.",
+          description: "A collection of Niagara effects designed for games.",
         },
         {
-          title: "Concept / Console Arts",
+          title: "Concept Arts",
           description: "A visual art project inspired by The Matrix.",
         },
       ],
@@ -160,7 +153,7 @@ export const TRANSLATIONS = {
       title_start: "価値のある",
       title_highlight: "デジタル体験",
       title_end: "を創る。",
-      desc: "リアルタイムグラフィックス、データ、ソフトウェアエンジニアリングを融合し、インタラクティブなシステムを構築しています。",
+      desc: "リアルタイムグラフィックス、データ、ソフトウェアエンジニアリングを融合し、システムを構築しています。",
       cta: "制作実績を見る",
     },
     separator: {
@@ -175,12 +168,9 @@ export const TRANSLATIONS = {
       headline_word2: "エンジニアリング",
       headline_suffix: "をつなぐ。",
       catchphrase: "論理と想像力が交差するデジタル世界を創る。",
-      bio1: "インタラクティブなデジタル体験の創造を軸に活動する開発者です。組み込みシステム分野での経験を通じて、コンピュータアーキテクチャや低レベル処理、パフォーマンス設計の基礎を培ってきました。現在はその知見を活かし、リアルタイムグラフィックス、データ処理、ソフトウェアエンジニアリングを融合したインタラクティブなシステム開発に注力しています。",
-      bio2: "ゲームシステム、3D表現、データ可視化、Webアプリケーションなど、分野を横断した開発を行っています。コーディング以外では、3Dアートの制作、ゲームプレイ、新しい技術の学習を楽しんでいます。",
-      stats: {
-        exp: "経験年数",
-        proj: "プロジェクト",
-      },
+      bio1: "インタラクティブなデジタル体験の創造を軸に活動する開発者です。組み込みシステム分野での経験を通じて、コンピュータアーキテクチャや低レベル処理、パフォーマンス設計の基礎を培ってきました。",
+      bio2: "ゲームシステム、3D表現、データ可視化など、分野を横断した開発を行っています。",
+      stats: { exp: "経験年数", proj: "プロジェクト" },
       tags: [
         "インタラクティブシステム",
         "リアルタイム3D",
@@ -202,12 +192,13 @@ export const TRANSLATIONS = {
         ],
       },
     },
+    featured_tag: "注目プロジェクト",
     featured: [
       {
         tag: "Cesium(Web) + Python",
         title: "Satellite Finder",
         theme: "gold",
-        desc: "Python APIとCesiumを用いて構築した、リアルタイム衛星トラッキングおよび可視化システム。軌道データと地理情報を統合し、直感的なインタラクティブ表示を実現。",
+        desc: "Python APIとCesiumを用いて構築した、リアルタイム衛星トラッキングおよび可視化システム。軌道データと地理情報を統合。",
         video: "/videos/satellite_preview.mp4",
         modalVideo: "/videos/satellite_full.mp4",
         github: "https://github.com/WillYan0224/SatelliteFinder",
@@ -216,8 +207,8 @@ export const TRANSLATIONS = {
       {
         tag: "Unreal Engine 5.6",
         title: "動的天候システム",
-        theme: "gold",
-        desc: "雨、雪、昼夜の切り替えを含む、リアルタイム環境制御システム。",
+        theme: "rose",
+        desc: "雨、雪、昼夜の切り替えを含む、リアルタイム環境制御システム。VFXと環境制御を統合。",
         video: "/videos/dynamicWeather.mp4",
         modalVideo: "/videos/dynamicWea.mp4",
         github: "https://github.com/WillYan0224/DynamicSky",
@@ -229,45 +220,37 @@ export const TRANSLATIONS = {
       list: [
         {
           title: "Satellite Finder",
+          description: "Python＋Web API＋Cesiumで構築した衛星トラッキング。",
+        },
+        {
+          title: "時系列機械学習",
+          description: "USD/JPYを対象とした為替予測システム。",
+        },
+        {
+          title: "物体検出",
           description:
-            "Python＋Web API＋Cesiumで構築した、リアルタイム衛星トラッキング／可視化アプリ。",
+            "映像ストリームからリアルタイムで物体検出を行うシステム。",
         },
         {
-          title: "時系列機械学習 USD/JPY",
-          description:
-            "USD/JPY（JPY=X）を対象としたエンドツーエンドの為替予測システム。",
+          title: "動的天候システム",
+          description: "VFXと環境制御を統合した環境システム。",
         },
         {
-          title: "OpenCVによる物体検出",
-          description:
-            "映像ストリームからリアルタイムで物体検出とデータ抽出を行うシステム。",
+          title: "クライミング",
+          description: "オープンワールド向けクライミングシステム。",
         },
         {
-          title: "Unreal Engine 5 動的天候システム",
-          description: "VFXと環境制御を統合したリアルタイム環境システム。",
+          title: "GAS RPG",
+          description: "Gameplay Ability Systemを活用したRPG。",
         },
         {
-          title: "クライミングメカニクスシステム",
-          description:
-            "オープンワールドゲーム向けに設計された柔軟なクライミングシステム。",
+          title: "水面マテリアル",
+          description: "視覚表現とインタラクションを両立した水面。",
         },
+        { title: "Niagara VFX", description: "ゲーム向けに制作したVFX集。" },
         {
-          title: "GASを用いたトップダウンRPG",
-          description:
-            "Unreal EngineのGameplay Ability Systemを活用したトップダウンRPG。",
-        },
-        {
-          title: "リアルな水面マテリアル",
-          description: "視覚表現とインタラクションを両立した水面マテリアル。",
-        },
-        {
-          title: "Niagara VFX",
-          description: "ゲーム向けに制作したNiagaraビジュアルエフェクト集。",
-        },
-        {
-          title: "コンセプト／コンソールアート",
-          description:
-            "『マトリックス』に着想を得たビジュアルアートプロジェクト。",
+          title: "コンセプトアート",
+          description: "『マトリックス』に着想を得たビジュアルアート。",
         },
       ],
     },
