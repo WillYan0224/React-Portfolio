@@ -64,8 +64,8 @@ export const TRANSLATIONS = {
         title: "Satellite Finder",
         theme: "gold",
         desc: "A real-time satellite tracking and visualization system built with Python APIs and Cesium, enabling live orbital data exploration and geographic context.",
-        video: "/videos/satellite_preview.mp4",
-        modalVideo: "/videos/satellite_full.mp4",
+        video: "/videos/Satellite.mp4",
+        modalVideo: "/videos/Satellite_1.mp4",
         github: "https://github.com/WillYan0224/SatelliteFinder",
         btn: "Watch Overview",
       },
@@ -84,41 +84,45 @@ export const TRANSLATIONS = {
       title: "Selected Works",
       list: [
         {
-          title: "Satellite Finder",
+          title: "Climbling Mechanic system",
           description:
-            "A real-time satellite tracker built with Python + web APIs + Cesium.",
+            "A flexible climbing system designed for open-world games.",
         },
         {
-          title: "Time-Series ML",
-          description: "An end-to-end USD/JPY forecasting system.",
-        },
-        {
-          title: "OpenCV Detection",
-          description: "Real-time object detection and data extraction.",
-        },
-        {
-          title: "Dynamic Weather",
-          description: "A real-time environment system integrating VFX.",
-        },
-        {
-          title: "Climbing System",
-          description: "A flexible climbing system for open-world games.",
-        },
-        {
-          title: "Top-down RPG",
-          description: "Built with Unreal Engine's Gameplay Ability System.",
-        },
-        {
-          title: "Realistic Water",
+          title: "Realistic Water Material",
           description: "A visually rich and interactive water material.",
         },
         {
-          title: "Niagara VFX",
-          description: "A collection of Niagara effects designed for games.",
+          title: "Top-down RPG using GAS",
+          description:
+            "A top-down RPG project built with Unreal Engine's Gameplay Ability System.",
         },
         {
-          title: "Concept Arts",
+          title: "Time-Series Machine Learning USD/JPY",
+          description: "An end-to-end USD/JPY (JPY=X) forecasting system",
+        },
+        {
+          title: "Object Detection Using OpenCV",
+          description:
+            "Real-time object detection and data extraction from video streams.",
+        },
+        {
+          title: "Consoles Arts",
           description: "A visual art project inspired by The Matrix.",
+        },
+        {
+          title: "Object training using CNN",
+          description:
+            "Projects involving data analysis and machine learning model training.",
+        },
+        {
+          title: "Niagara VFX",
+          description:
+            "A collection of Niagara visual effects designed for games.",
+        },
+        {
+          title: "For reserve",
+          description: "Pending... ",
         },
       ],
     },
@@ -219,38 +223,46 @@ export const TRANSLATIONS = {
       title: "制作実績",
       list: [
         {
-          title: "Satellite Finder",
-          description: "Python＋Web API＋Cesiumで構築した衛星トラッキング。",
-        },
-        {
-          title: "時系列機械学習",
-          description: "USD/JPYを対象とした為替予測システム。",
-        },
-        {
-          title: "物体検出",
+          title: "クライミングメカニクスシステム",
           description:
-            "映像ストリームからリアルタイムで物体検出を行うシステム。",
+            "オープンワールドゲーム向けに設計された柔軟なクライミングシステム",
         },
         {
-          title: "動的天候システム",
-          description: "VFXと環境制御を統合した環境システム。",
+          title: "リアルな水面マテリアル",
+          description: "視覚表現とインタラクションを両立した水面マテリアル",
         },
         {
-          title: "クライミング",
-          description: "オープンワールド向けクライミングシステム。",
+          title: "GASを用いたトップダウンRPG",
+          description:
+            "Unreal EngineのGameplay Ability Systemを活用したトップダウンRPG",
         },
         {
-          title: "GAS RPG",
-          description: "Gameplay Ability Systemを活用したRPG。",
+          title: "時系列機械学習 USD/JPY",
+          description:
+            "USD/JPY（JPY=X）を対象としたエンドツーエンドの為替予測システム",
         },
         {
-          title: "水面マテリアル",
-          description: "視覚表現とインタラクションを両立した水面。",
+          title: "OpenCVによる物体検出",
+          description:
+            "映像ストリームからリアルタイムで物体検出とデータ抽出を行うシステム。",
         },
-        { title: "Niagara VFX", description: "ゲーム向けに制作したVFX集。" },
         {
-          title: "コンセプトアート",
-          description: "『マトリックス』に着想を得たビジュアルアート。",
+          title: "ConsoleArt作品",
+          description:
+            "『マトリックス』に着想を得たビジュアルアートプロジェクト",
+        },
+        {
+          title: "CNNを用いた物体認識",
+          description:
+            "データ分析および機械学習モデルの学習を行ったプロジェクト",
+        },
+        {
+          title: "Niagara VFX",
+          description: "ゲーム向けに制作したNiagaraビジュアルエフェクト集",
+        },
+        {
+          title: "準備中",
+          description: "近日公開予定",
         },
       ],
     },

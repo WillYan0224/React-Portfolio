@@ -537,11 +537,11 @@ const About = () => {
 };
 
 // 6. Featured Project
+// --- Sub-component for the 3D Tilt Effect ---
 const TiltCard = ({ children }) => {
   const cardRef = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-
   const mouseXSpring = useSpring(x);
   const mouseYSpring = useSpring(y);
 
@@ -551,10 +551,8 @@ const TiltCard = ({ children }) => {
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    x.set(mouseX / rect.width - 0.5);
-    y.set(mouseY / rect.height - 0.5);
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
   const handleMouseLeave = () => {
@@ -578,7 +576,7 @@ const TiltCard = ({ children }) => {
 const FeaturedProjects = () => {
   const { t } = useLanguage();
   const [activeProject, setActiveProject] = useState(null);
-  const videoRef = useRef(null);
+  const modalVideoRef = useRef(null);
 
   const PROJECT_TITLE_STYLES = {
     gold: "text-[#F5C77A] drop-shadow-[0_0_15px_rgba(245,199,122,0.3)]",
@@ -589,16 +587,20 @@ const FeaturedProjects = () => {
 
   const openModal = (project) => {
     setActiveProject(project);
+    // Auto-play modal video when it opens
     setTimeout(() => {
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.play().catch(() => {});
+      if (modalVideoRef.current) {
+        modalVideoRef.current
+          .play()
+          .catch((err) => console.error("Video play failed:", err));
       }
-    }, 50);
+    }, 100);
   };
 
   const closeModal = () => {
-    if (videoRef.current) videoRef.current.pause();
+    if (modalVideoRef.current) {
+      modalVideoRef.current.pause();
+    }
     setActiveProject(null);
   };
 
@@ -608,6 +610,7 @@ const FeaturedProjects = () => {
         id="work"
         className="py-32 px-6 md:px-20 bg-black relative overflow-hidden"
       >
+        {/* Background Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
         <div className="max-w-6xl mx-auto mb-28 relative">
@@ -650,16 +653,12 @@ const FeaturedProjects = () => {
                       className={
                         PROJECT_TITLE_STYLES[project.theme] || "text-white"
                       }
-                      initial={{ pathLength: 0, pathOffset: 0 }}
-                      animate={{
-                        pathLength: [0, 0.18, 0.18],
-                        pathOffset: [0, 0, 1],
-                      }}
+                      initial={{ pathLength: 0.18, pathOffset: 0 }}
+                      animate={{ pathOffset: 1 }}
                       transition={{
                         duration: 6,
                         repeat: Infinity,
-                        ease: [0.4, 0.0, 0.2, 1],
-                        times: [0, 0.18, 1],
+                        ease: "linear",
                       }}
                     />
                   </svg>
@@ -677,11 +676,13 @@ const FeaturedProjects = () => {
                     >
                       <source src={project.video} type="video/mp4" />
                     </video>
+
                     <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="bg-black/60 backdrop-blur-md border border-white/10 px-2 py-1 rounded font-mono text-[10px] text-primary">
                         DATA_FLOW_0{index + 1}
                       </div>
                     </div>
+
                     <motion.div
                       className="absolute inset-0 z-20 pointer-events-none"
                       initial={{ x: "-100%", skewX: -20 }}
@@ -692,7 +693,9 @@ const FeaturedProjects = () => {
                           "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
                       }}
                     />
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <div className="p-6 rounded-full bg-white text-black shadow-2xl scale-90 group-hover:scale-100 transition-transform">
                         <Play fill="currentColor" size={28} />
@@ -716,6 +719,7 @@ const FeaturedProjects = () => {
                   <p className="text-gray-400 text-lg leading-relaxed font-light border-l border-white/10 pl-6">
                     {project.desc}
                   </p>
+
                   <div className="flex items-center gap-5 pt-4">
                     <button
                       onClick={() => openModal(project)}
@@ -742,7 +746,42 @@ const FeaturedProjects = () => {
         </div>
       </section>
 
-      {/* Modal remains the same */}
+      {/* --- MODAL (MAKE SURE THIS IS HERE) --- */}
+      <AnimatePresence>
+        {activeProject && (
+          <motion.div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+          >
+            <motion.div
+              className="relative w-full max-w-7xl aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl border border-white/10"
+              initial={{ scale: 0.9, opacity: 0, rotateX: 10 }}
+              animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={closeModal}
+                className="absolute top-8 right-8 z-[1000] p-4 bg-black/50 hover:bg-white/10 rounded-full text-white transition-all hover:rotate-90 duration-300"
+              >
+                <X size={28} />
+              </button>
+              <video
+                ref={modalVideoRef}
+                className="w-full h-full"
+                controls
+                autoPlay
+                playsInline
+              >
+                <source src={activeProject.modalVideo} type="video/mp4" />
+              </video>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
