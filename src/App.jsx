@@ -8,14 +8,12 @@ import React, {
 } from "react";
 import {
   motion,
-  useScroll,
-  useTransform,
   AnimatePresence,
   useMotionValue,
   useSpring,
+  useTransform,
 } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, ContactShadows, Edges } from "@react-three/drei";
 import * as THREE from "three";
 import {
   Github,
@@ -23,78 +21,145 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Play, // Added Play just in case, though not used in new video card
-  Cpu,
-  Terminal,
-  Layers,
+  Play,
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
+
+// --- DATA CONSTANTS ---
+import { SKILLS_DATA, DEVTOOL_DATA } from "./data/skills";
+import { PROJECTS } from "./data/porjects";
+import { TRANSLATIONS } from "./data/translations";
 
 // --- 1. CONTEXT SETUP ---
 const LanguageContext = createContext();
 const useLanguage = () => useContext(LanguageContext);
 
-// --- 2. DATA CONSTANTS ---
-import { SKILLS_DATA, DEVTOOL_DATA } from "./data/skills";
-import { PROJECTS } from "./data/porjects";
-import { TRANSLATIONS } from "./data/translations";
-// ** ADDED MISSING PROJECTS DATA **
+// --- 2. 3D OCEAN COMPONENTS ---
 
-// --- COMPONENTS ---
-// 1. Navigation
+const OceanSurface = () => {
+  const meshRef = useRef();
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+    const positions = meshRef.current.geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+      const x = positions[i];
+      const y = positions[i + 1];
+      positions[i + 2] =
+        Math.sin(x * 0.4 + time) * 0.25 + Math.sin(y * 0.2 + time * 0.6) * 0.25;
+    }
+    meshRef.current.geometry.attributes.position.needsUpdate = true;
+  });
+
+  return (
+    <mesh ref={meshRef} rotation={[-Math.PI / 2.1, 0, 0]} position={[0, 3, 0]}>
+      <planeGeometry args={[35, 35, 64, 64]} />
+      <meshStandardMaterial
+        color="#4facfe"
+        transparent
+        opacity={0.5}
+        roughness={0.1}
+        metalness={0.9}
+      />
+    </mesh>
+  );
+};
+
+const PBRBubbles = ({ count = 40, area = 20 }) => {
+  const meshRef = useRef();
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const particles = useMemo(() => {
+    const temp = [];
+    for (let i = 0; i < count; i++) {
+      temp.push({
+        t: Math.random() * 100,
+        speed: 0.02 + Math.random() / 30,
+        x: (Math.random() - 0.5) * area,
+        y: (Math.random() - 0.5) * area,
+        z: (Math.random() - 0.5) * 10,
+        size: 0.1 + Math.random() * 0.2,
+      });
+    }
+    return temp;
+  }, [count, area]);
+
+  useFrame((state) => {
+    particles.forEach((p, i) => {
+      p.y += p.speed;
+      if (p.y > area / 2) p.y = -area / 2;
+      dummy.position.set(p.x + Math.sin(p.y + p.t) * 0.3, p.y, p.z);
+      dummy.scale.set(p.size, p.size, p.size);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    });
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh ref={meshRef} args={[null, null, count]}>
+      <sphereGeometry args={[1, 32, 32]} />
+      <meshPhysicalMaterial
+        transmission={1}
+        thickness={0.5}
+        roughness={0}
+        ior={1.33}
+        iridescence={1}
+        iridescenceIOR={1.5}
+        transparent
+        opacity={0.4}
+      />
+    </instancedMesh>
+  );
+};
+
+// --- 3. UI COMPONENTS ---
+
 const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
   return (
-    <nav className="sticky top-0 w-full p-6 grid grid-cols-3 items-center z-50 bg-black/20 backdrop-blur-md text-white">
-      {/* Left */}
-      <div className="justify-self-start text-2xl font-bold tracking-tighter">
+    <nav className="fixed top-0 w-full px-8 py-6 grid grid-cols-3 items-center z-[100] bg-[#0a0a0a]/90 backdrop-blur-3xl border-b border-white/10 text-white shadow-2xl">
+      <div className="justify-self-start text-2xl font-black tracking-tighter">
         PORTFOLIO.
       </div>
 
-      {/* Center */}
-      <div className="justify-self-center hidden md:flex gap-8 font-medium items-center">
-        <a href="#about" className="hover:text-primary transition-colors">
+      <div className="justify-self-center hidden md:flex gap-12 font-bold text-sm uppercase tracking-[0.2em] text-gray-300">
+        <a href="#about" className="hover:text-cyan-400 transition-all">
           {t.nav.about}
         </a>
-        <a href="#work" className="hover:text-primary transition-colors">
+        <a href="#work" className="hover:text-cyan-400 transition-all">
           {t.nav.work}
         </a>
-        <a href="#contact" className="hover:text-primary transition-colors">
+        <a href="#contact" className="hover:text-cyan-400 transition-all">
           {t.nav.contact}
         </a>
       </div>
 
-      {/* Right */}
-      <div className="justify-self-end hidden md:flex items-center gap-6">
-        <div className="flex items-center gap-2 border-l border-white/20 pl-6 ml-2">
+      <div className="justify-self-end flex items-center gap-6">
+        <div className="flex gap-4 items-center border-l border-white/10 pl-6">
           <button
             onClick={() => setLanguage("en")}
-            className={`text-sm font-bold transition-colors ${
-              language === "en"
-                ? "text-white"
-                : "text-gray-500 hover:text-white"
+            className={`text-sm font-bold ${
+              language === "en" ? "text-cyan-400" : "text-gray-500"
             }`}
           >
             EN
           </button>
-          <span className="text-gray-600">|</span>
+
           <button
             onClick={() => setLanguage("jp")}
-            className={`text-sm font-bold transition-colors ${
-              language === "jp"
-                ? "text-white"
-                : "text-gray-500 hover:text-white"
+            className={`text-sm font-bold ${
+              language === "jp" ? "text-cyan-400" : "text-gray-500"
             }`}
           >
             JP
           </button>
         </div>
 
+        {/* Updated Button Colors */}
         <a
           href="#contact"
           className="relative hidden md:inline-flex h-12 overflow-hidden rounded-full p-[2px] focus:outline-none group"
         >
-          <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]" />
+          <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#22d3ee_0%,#3b82f6_50%,#22d3ee_100%)]" />
           <span
             className="
         relative inline-flex h-full w-full items-center justify-center
@@ -104,14 +169,14 @@ const Navbar = () => {
         group-hover:text-white
       "
           >
-            {/* Glow wipe */}
+            {/* Glow wipe updated to Cyan/Blue */}
             <span
               className="
           absolute inset-0
           -translate-x-full group-hover:translate-x-0
           transition-transform duration-700 ease-out
           opacity-60
-          bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]
+          bg-[conic-gradient(from_90deg_at_50%_50%,#22d3ee_0%,#3b82f6_50%,#22d3ee_100%)]
           blur-lg
         "
             />
@@ -123,92 +188,6 @@ const Navbar = () => {
   );
 };
 
-// --- 3D Components ---
-// --- Optimized Floating Shape ---
-// moved geometry creation outside to prevent re-calculation
-const circleGeo = new THREE.CircleGeometry(0.5, 3);
-const tetraGeo = new THREE.TetrahedronGeometry(0.6, 0);
-const octaGeo = new THREE.OctahedronGeometry(0.5, 0);
-const dodecaGeo = new THREE.DodecahedronGeometry(0.5, 0);
-
-const FloatingShape = ({ position, color, speed, type }) => {
-  const meshRef = useRef();
-
-  // Use a lighter rotation logic
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      // Rotate slower to reduce visual jitter
-      meshRef.current.rotation.x += delta * speed * 0.8;
-      meshRef.current.rotation.y += delta * speed * 0.8;
-    }
-  });
-
-  // Select geometry from pre-created instances
-  let geometry;
-  if (type === 0) geometry = circleGeo;
-  else if (type === 1) geometry = tetraGeo;
-  else if (type === 2) geometry = octaGeo;
-  else geometry = dodecaGeo;
-
-  return (
-    <Float
-      speed={2}
-      rotationIntensity={1}
-      floatIntensity={1.5} // Reduced intensity slightly
-      floatingRange={[-0.2, 0.2]} // Reduced range to keep them closer
-    >
-      <mesh ref={meshRef} position={position} geometry={geometry}>
-        {/* Simplified Material: Lower roughness, remove metalness calculation */}
-        <meshStandardMaterial
-          color="#050505"
-          transparent={false}
-          opacity={1}
-          roughness={0.1}
-          side={THREE.DoubleSide}
-        />
-
-        {/* Optimized Edges: Lower threshold means less lines to calculate */}
-        <Edges scale={1.02} threshold={15} color={color}>
-          <meshBasicMaterial transparent opacity={1} side={THREE.DoubleSide} />
-        </Edges>
-      </mesh>
-    </Float>
-  );
-};
-
-// --- Optimized Background Manager ---
-const GeometricBackground = () => {
-  const shapes = useMemo(() => {
-    // Reduced count from 40 to 20 for better performance
-    return new Array(20).fill(0).map(() => ({
-      position: [
-        (Math.random() - 0.5) * 18,
-        (Math.random() - 0.5) * 10,
-        (Math.random() - 0.5) * 10,
-      ],
-      type: Math.floor(Math.random() * 4),
-      color:
-        Math.random() > 0.5
-          ? "#6366f1"
-          : Math.random() > 0.5
-            ? "#a855f7"
-            : "#ffffff",
-      speed: Math.random() * 0.5 + 0.2,
-    }));
-  }, []);
-
-  return (
-    <group>
-      {shapes.map((shape, i) => (
-        <FloatingShape key={i} {...shape} />
-      ))}
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1.5} />
-    </group>
-  );
-};
-
-// --- Optimized Hero Component ---
 const Hero = () => {
   const { t } = useLanguage();
   const [roleIndex, setRoleIndex] = useState(0);
@@ -222,34 +201,24 @@ const Hero = () => {
   }, [ROLES]);
 
   return (
-    <section className="h-screen w-full relative overflow-hidden bg-black flex flex-col justify-center px-6 md:px-20">
+    <section className="h-screen w-full relative overflow-hidden flex flex-col justify-center px-6 md:px-20 bg-gradient-to-b from-[#4facfe] to-[#004C99]">
       <div className="absolute inset-0 z-0">
-        {/* 
-           PERFORMANCE SETTINGS:
-           1. dpr={[1, 1.5]}: Caps resolution on retina screens. Huge FPS booster.
-           2. antialias: false: Makes edges slightly jagged but much faster.
-           3. performance={{ min: 0.5 }}: Automatically lowers quality if FPS drops.
-        */}
-        <Canvas
-          dpr={[1, 1.5]}
-          camera={{ position: [0, 0, 8], fov: 50 }}
-          gl={{ antialias: false, powerPreference: "high-performance" }}
-        >
-          <fog attach="fog" args={["#000000", 5, 20]} />
-          <GeometricBackground />
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 8], fov: 50 }}>
+          <ambientLight intensity={1} />
+          <pointLight position={[10, 10, 10]} intensity={2} color="#ffffff" />
+          <OceanSurface />
+          <fog attach="fog" args={["#004C99", 5, 15]} />
         </Canvas>
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
-        className="z-10 max-w-[52rem] pointer-events-none"
+        className="z-10 max-w-[74rem] pointer-events-none"
       >
-        <div className="pointer-events-auto backdrop-blur-sm bg-black/30 border border-white/5 p-8 md:p-4 rounded-3xl shadow-2xl relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-
-          <h2 className="text-xl md:text-2xl text-primary font-mono mb-6 flex items-center gap-2">
+        <div className="pointer-events-auto backdrop-blur-xl bg-black/20 border border-white/10 p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative">
+          <h2 className="text-xl md:text-2xl text-cyan-300 font-mono mb-6 flex items-center gap-2 whitespace-nowrap">
             <span>{t.hero.greeting}</span>
             <div className="relative ml-2 h-8 w-64 flex items-center ">
               <AnimatePresence mode="wait">
@@ -258,95 +227,63 @@ const Hero = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -20, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="absolute font-bold text-white block whitespace-nowrap"
+                  className="absolute font-bold text-white block uppercase tracking-tight whitespace-nowrap"
                 >
                   {ROLES[roleIndex]}
                 </motion.span>
               </AnimatePresence>
             </div>
           </h2>
-
-          <h1 className="text-5xl md:text-8xl font-bold leading-tight mb-6">
+          <h1 className="text-6xl md:text-6xl font-black leading-[0.9] mb-8 text-white tracking-tighter drop-shadow-2xl">
             {t.hero.title_start}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary neon-gradient-text">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400">
               {t.hero.title_highlight}
-            </span>{" "}
-            {t.hero.title_end}
+            </span>
           </h1>
-
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-8">
+          <p className="text-blue-50 text-lg md:text-xl max-w-xl mb-10 leading-relaxed font-medium opacity-90">
             {t.hero.desc}
           </p>
-
-          <div className="flex gap-4">
-            <a
-              href="#work"
-              className="relative inline-flex h-14 overflow-hidden rounded-lg p-[2px] focus:outline-none group"
-            >
-              <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]" />
-              {/* Inner layer */}
-              <span
-                className="
-        relative inline-flex h-full w-full items-center justify-center
-        overflow-hidden rounded-lg bg-black/90 px-8 py-1
-        text-sm font-medium text-white backdrop-blur-3xl
-        transition-colors duration-500 ease-out
-        group-hover:text-white
-      "
-              >
-                {/* Glow wipe */}
-                <span
-                  className="
-          absolute inset-0
-          -translate-x-full group-hover:translate-x-0
-          transition-transform duration-700 ease-out
-          opacity-60
-          bg-[conic-gradient(from_90deg_at_50%_50%,#6366f1_0%,#a855f7_50%,#6366f1_100%)]
-          blur-lg
-        "
-                />
-
-                <span className="relative z-10">{t.hero.cta}</span>
-              </span>
-            </a>
-          </div>
+          <a
+            href="#work"
+            className="inline-flex h-16 items-center justify-center rounded-2xl bg-cyan-500 px-12 text-sm font-black text-white hover:bg-white hover:text-cyan-600 transition-all shadow-xl shadow-cyan-500/20 uppercase tracking-widest"
+          >
+            {t.hero.cta}
+          </a>
         </div>
       </motion.div>
     </section>
   );
 };
-// 3. Tech Marquee
+
 const TechMarquee = () => {
   return (
-    <div className="py-20 bg-zinc-900 overflow-hidden relative border-y border-white/5 flex flex-col gap-20">
-      {/* Side Fade Gradients (Covers both rows) */}
-      <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-zinc-900 to-transparent z-10" />
-      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-zinc-900 to-transparent z-10" />
+    <div className="py-20 bg-[#082847]/80 backdrop-blur-md overflow-hidden relative border-y border-white/10 flex flex-col gap-20">
+      {/* Side Fade Gradients */}
+      <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#082847] to-transparent z-10" />
+      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#082847] to-transparent z-10" />
 
       {/* --- ROW 1: Scrolling LEFT --- */}
       <motion.div
         className="flex whitespace-nowrap"
-        animate={{ x: [0, -1035] }} // -1035 is approx width of one set of data. Adjust this if gap changes.
+        animate={{ x: [0, -1035] }}
         transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
       >
-        {/* Repeating 4 times to ensure no gaps on wide screens */}
         {[...SKILLS_DATA, ...SKILLS_DATA, ...SKILLS_DATA, ...SKILLS_DATA].map(
           (skill, index) => (
             <div
               key={`row1-${index}`}
               className="mx-4 flex items-center gap-4 group cursor-default"
             >
-              <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5 group-hover:border-primary/50 group-hover:bg-zinc-800/80 transition-colors duration-300">
+              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-cyan-400/50 group-hover:bg-white/10 transition-colors duration-300">
                 <img
                   src={skill.icon}
                   alt={skill.name}
-                  className={`w-7 h-7 object-contain ${
+                  className={`w-7 h-7 object-contain opacity-70 group-hover:opacity-100 ${
                     skill.invert ? "invert brightness-0" : ""
                   }`}
                 />
               </div>
-              <span className="text-xl font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-tight">
+              <span className="text-xl font-bold text-cyan-100/35 group-hover:text-cyan-100 transition-colors uppercase tracking-tight">
                 {skill.name}
               </span>
             </div>
@@ -358,10 +295,9 @@ const TechMarquee = () => {
       <motion.div
         className="flex whitespace-nowrap"
         initial={{ x: -1035 }}
-        animate={{ x: [-1035, 0] }} // Moves from left to right
+        animate={{ x: [-1035, 0] }}
         transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
       >
-        {/* We reverse the data here so the order looks different than the top row */}
         {[...DEVTOOL_DATA, ...DEVTOOL_DATA, ...DEVTOOL_DATA, ...DEVTOOL_DATA]
           .reverse()
           .map((devtool, index) => (
@@ -369,16 +305,16 @@ const TechMarquee = () => {
               key={`row2-${index}`}
               className="mx-4 flex items-center gap-4 group cursor-default"
             >
-              <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5 group-hover:border-secondary/50 group-hover:bg-zinc-800/80 transition-colors duration-300">
+              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-cyan-400/50 group-hover:bg-white/10 transition-colors duration-300">
                 <img
                   src={devtool.icon}
                   alt={devtool.name}
-                  className={`w-7 h-7 object-contain ${
+                  className={`w-7 h-7 object-contain opacity-70 group-hover:opacity-100 ${
                     devtool.invert ? "invert brightness-0" : ""
                   }`}
                 />
               </div>
-              <span className="text-xl font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-tight">
+              <span className="text-xl font-bold text-cyan-100/35 group-hover:text-cyan-100 transition-colors uppercase tracking-tight">
                 {devtool.name}
               </span>
             </div>
@@ -388,185 +324,86 @@ const TechMarquee = () => {
   );
 };
 
-// 4. Separator
-const SectionSeparator = () => {
-  const { t } = useLanguage();
-  return (
-    <section className="py-12 bg-zinc-950 flex flex-col items-center justify-center relative z-10">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center"
-      >
-        <span className="text-primary/90 font-mono text-4xl tracking-[0.3em] uppercase mb-3 block">
-          {t.separator.subtitle}
-        </span>
-        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-          {t.separator.title}
-        </h2>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-primary via-transparent to-transparent mx-auto mt-8 opacity-20" />
-      </motion.div>
-    </section>
-  );
-};
-
-// 5. About
 const About = () => {
   const { t } = useLanguage();
   return (
-    <section id="about" className="py-24 px-6 md:px-20 bg-zinc-900/30">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <section
+      id="about"
+      className="py-32 px-6 md:px-20 relative overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center relative z-10">
         <motion.div
-          className="max-w-xl"
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
         >
-          <h2 className="text-primary font-mono mb-4">{t.about.title}</h2>
-
-          {/* Headline */}
-          <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            {t.about.headline_prefix && (
-              <span className="block mb-1">{t.about.headline_prefix}</span>
-            )}
-            <span className="block">
-              <span className="text-primary">{t.about.headline_word1}</span>
-              <span className="text-4xl mx-2">
-                {t.about.headline_connector}
-              </span>
-              <span className="text-secondary">{t.about.headline_word2}</span>
-              {t.about.headline_suffix && (
-                <span> {t.about.headline_suffix}</span>
-              )}
-            </span>
+          <h2 className="text-cyan-400 font-mono mb-4 uppercase tracking-[0.5em] text-xs font-bold">
+            {t.about.title}
+          </h2>
+          <h3 className="text-5xl md:text-6xl font-black mb-8 text-white tracking-tighter leading-tight">
+            {t.about.headline_word1}{" "}
+            <span className="text-cyan-400">{t.about.headline_word2}</span>
           </h3>
-
-          <div className="mb-8 border-l-4 border-primary pl-6 py-2">
-            <p className="text-2xl italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-              "{t.about.catchphrase}"
-            </p>
-          </div>
-
-          <p className="text-gray-400 text-lg mb-6 leading-relaxed">
+          <p className="text-blue-50 text-lg mb-10 leading-relaxed border-l-4 border-cyan-500/30 pl-8 opacity-80">
             {t.about.bio1}
           </p>
-          <p className="text-gray-400 text-lg mb-8 leading-relaxed">
-            {t.about.bio2}
-          </p>
-
-          {/* Stats Row */}
-          <div className="flex gap-8 border-t border-white/10 pt-8 mb-8">
+          <div className="flex gap-12 border-t border-white/10 pt-10">
             <div>
-              <h4 className="text-3xl font-bold text-white">4+</h4>
-              <p className="text-sm text-gray-500 uppercase tracking-wider">
-                {t.about.stats.exp}
+              <h4 className="text-5xl font-black text-white tracking-tighter">
+                4+
+              </h4>
+              <p className="text-xs text-cyan-500 uppercase font-bold tracking-widest mt-2">
+                Years Exp
               </p>
             </div>
             <div>
-              <h4 className="text-3xl font-bold text-white">15+</h4>
-              <p className="text-sm text-gray-500 uppercase tracking-wider">
-                {t.about.stats.proj}
+              <h4 className="text-5xl font-black text-white tracking-tighter">
+                15+
+              </h4>
+              <p className="text-xs text-cyan-500 uppercase font-bold tracking-widest mt-2">
+                Projects
               </p>
             </div>
           </div>
-
-          {/* --- TAGS AREA --- */}
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">
-                Focus
-              </h4>
-              <div className="flex flex-wrap gap-3">
-                {t.about.tags &&
-                  t.about.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium text-gray-300 hover:border-primary hover:text-white hover:bg-primary/10 transition-all cursor-default"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-              </div>
-            </div>
-
-            {/* Hobbies / Interests */}
-            <div>
-              <h4 className="text-xs font-mono text-gray-500 mb-3 uppercase tracking-widest">
-                {t.about.hobbies.title}
-              </h4>
-              <div className="flex flex-wrap gap-3">
-                {t.about.hobbies.list &&
-                  t.about.hobbies.list.map((hobby, index) => (
-                    <span
-                      key={index}
-                      className="px-4 py-1.5 rounded-full border border-white/5 bg-zinc-800/50 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all cursor-default"
-                    >
-                      {hobby}
-                    </span>
-                  ))}
-              </div>
-            </div>
-          </div>
-          {/* ----------------- */}
         </motion.div>
-
-        {/* Right Side Image */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/5] border border-white/10">
-            <img
-              src="/photos/HKport_001.jpg"
-              alt=""
-              className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-out"
-              loading="lazy"
-            />
-          </div>
-        </motion.div>
+        <div className="relative rounded-[2.5rem] overflow-hidden aspect-[4/5] border border-white/10 shadow-2xl rotate-2">
+          <img
+            src="/photos/HKport_001.jpg"
+            alt="About"
+            className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-1000"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001933]/60 to-transparent" />
+        </div>
       </div>
     </section>
   );
 };
 
-// 6. Featured Project
-// --- Sub-component for the 3D Tilt Effect ---
+// --- FEATURED PROJECTS ---
+
 const TiltCard = ({ children }) => {
-  const cardRef = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseXSpring = useSpring(x);
   const mouseYSpring = useSpring(y);
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["1deg", "-1deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-1deg", "1deg"]);
 
   const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     x.set((e.clientX - rect.left) / rect.width - 0.5);
     y.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   return (
     <motion.div
-      ref={cardRef}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className="w-full md:w-3/5 group relative"
+      className="w-full md:w-[65%] relative cursor-pointer" // Increased width from 3/5 to 65%
     >
       {children}
     </motion.div>
@@ -576,206 +413,115 @@ const TiltCard = ({ children }) => {
 const FeaturedProjects = () => {
   const { t } = useLanguage();
   const [activeProject, setActiveProject] = useState(null);
-  const modalVideoRef = useRef(null);
-
-  const PROJECT_TITLE_STYLES = {
-    gold: "text-[#F5C77A] drop-shadow-[0_0_15px_rgba(245,199,122,0.3)]",
-    rose: "text-rose-400 drop-shadow-[0_0_15px_rgba(251,113,133,0.3)]",
-    blue: "text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)]",
-    violet: "text-violet-400 drop-shadow-[0_0_15px_rgba(167,139,250,0.3)]",
-  };
-
-  const openModal = (project) => {
-    setActiveProject(project);
-    setTimeout(() => {
-      if (modalVideoRef.current) {
-        modalVideoRef.current.play().catch((err) => console.error(err));
-      }
-    }, 100);
-  };
-
-  const closeModal = () => {
-    if (modalVideoRef.current) modalVideoRef.current.pause();
-    setActiveProject(null);
-  };
+  const videoRef = useRef(null);
 
   return (
     <>
-      <section
-        id="work"
-        className="py-32 px-6 md:px-20 bg-black relative overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-
-        <div className="max-w-6xl mx-auto mb-28 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3 mb-4"
-          >
-            <div className="h-[1px] w-12 bg-primary" />
-            <span className="text-primary font-mono text-sm tracking-[0.4em] uppercase">
-              {t.featured_tag}
-            </span>
-          </motion.div>
-          <h2 className="text-6xl md:text-6xl font-black tracking-tighter text-white uppercase">
-            Selected works
+      <section id="work" className="py-32 px-6 md:px-20">
+        <div className="max-w-[90rem] mx-auto mb-24">
+          {" "}
+          {/* Container increased from 6xl to 90rem */}
+          <h2 className="w-fit md:-ml-12 text-7xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">
+            Selected{" "}
+            <span className="text-cyan-500 text-shadow-glow">Works</span>
           </h2>
         </div>
 
-        <div className="max-w-6xl mx-auto space-y-48 md:space-y-64 relative z-10">
-          {t.featured.map((project, index) => {
-            const isEven = index % 2 === 0;
-            return (
-              <div
-                key={index}
-                className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-12 md:gap-20`}
-              >
-                <TiltCard>
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-30 opacity-60">
-                    <motion.rect
-                      x="0"
-                      y="0"
-                      width="100%"
-                      height="100%"
-                      rx="12"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      className={
-                        PROJECT_TITLE_STYLES[project.theme] || "text-white"
-                      }
-                      initial={{ pathLength: 0.18, pathOffset: 0 }}
-                      animate={{ pathOffset: 1 }}
-                      transition={{
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                    />
-                  </svg>
-
-                  <div
-                    onClick={() => openModal(project)}
-                    className="relative aspect-video rounded-xl overflow-hidden border border-white/5 bg-zinc-950 shadow-2xl cursor-pointer"
-                  >
-                    <video
-                      className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    >
-                      <source src={project.video} type="video/mp4" />
-                    </video>
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <div className="p-6 rounded-full bg-white text-black shadow-2xl">
-                        <Play fill="currentColor" size={28} />
-                      </div>
+        <div className="max-w-[90rem] mx-auto space-y-72">
+          {" "}
+          {/* Vertical spacing increased */}
+          {t.featured.map((project, index) => (
+            <div
+              key={index}
+              className={`flex flex-col ${
+                index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+              } items-center gap-16 md:gap-24`} // Gap increased
+            >
+              <TiltCard>
+                <div
+                  onClick={() => setActiveProject(project)}
+                  className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 bg-white/5 shadow-2xl group"
+                >
+                  <video
+                    src={project.video}
+                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="p-8 bg-white text-black rounded-full shadow-2xl scale-75 group-hover:scale-100 transition-transform">
+                      <Play fill="currentColor" size={40} />
                     </div>
                   </div>
-                </TiltCard>
+                </div>
+              </TiltCard>
 
-                <div className="w-full md:w-2/5 space-y-8 text-left relative z-10">
-                  <div className="flex items-center gap-4">
-                    <span className="px-3 py-1 rounded bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
-                      {project.tag}
-                    </span>
-                    <div className="h-[1px] flex-grow bg-white/10" />
-                  </div>
-
-                  <h3
-                    className={`text-4xl md:text-5xl font-bold tracking-tighter leading-tight ${PROJECT_TITLE_STYLES[project.theme] || "text-white"}`}
+              <div className="w-full md:w-[35%] space-y-8">
+                {" "}
+                {/* Text container reduced to accommodate bigger card */}
+                <span className="text-cyan-400 font-mono text-sm tracking-[0.4em] uppercase font-bold">
+                  {project.tag}
+                </span>
+                <h3 className="text-5xl md:text-6xl font-black text-white tracking-tighter leading-tight">
+                  {project.title}
+                </h3>
+                <p className="text-blue-50/70 leading-relaxed text-xl border-l-4 border-cyan-500/20 pl-8">
+                  {project.desc}
+                </p>
+                <div className="flex gap-6 pt-4">
+                  <button
+                    onClick={() => setActiveProject(project)}
+                    className="bg-white text-black px-12 py-5 rounded-2xl font-black hover:bg-cyan-500 hover:text-white transition-all uppercase text-sm tracking-widest shadow-xl"
                   >
-                    {project.title}
-                  </h3>
+                    Preview
+                  </button>
 
-                  <p className="text-gray-400 text-lg leading-relaxed font-light border-l border-white/10 pl-6">
-                    {project.desc}
-                  </p>
-
-                  <div className="flex items-center gap-5 pt-4">
-                    {/* Watch Overview Button */}
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault(); // Safety
-                        openModal(project);
-                      }}
-                      className="group relative flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-bold text-sm overflow-hidden z-20"
-                    >
-                      <span className="relative z-10 uppercase tracking-widest">
-                        {project.btn}
-                      </span>
-                      <motion.div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-
-                    {/* GitHub Link Button */}
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-5 bg-zinc-900 border border-white/10 rounded-full text-white hover:border-primary transition-all hover:scale-110 z-20 flex items-center justify-center"
-                      onClick={(e) => e.stopPropagation()} // Prevent triggering card click
-                    >
-                      <Github size={24} />
-                    </a>
-                    {/* 3. External Link Button */}
-                    {project.external && (
-                      <a
-                        href={project.external}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-4 bg-zinc-900 border border-white/10 rounded-full text-white hover:border-secondary transition-all hover:scale-110 z-20 flex items-center justify-center"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExternalLink size={22} />
-                      </a>
-                    )}
-                  </div>
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-colors"
+                  >
+                    <Github size={28} />
+                  </a>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </section>
 
+      {/* Modal logic remains same */}
       <AnimatePresence>
         {activeProject && (
           <motion.div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/98 backdrop-blur-2xl p-4"
+            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={closeModal}
+            onClick={() => setActiveProject(null)}
           >
-            <motion.div
-              className="relative w-full max-w-7xl aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl border border-white/10"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+            <div
+              className="relative w-full max-w-7xl aspect-video"
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                onClick={closeModal}
-                className="absolute top-8 right-8 z-[1000] p-4 bg-black/50 hover:bg-white/10 rounded-full text-white transition-all hover:rotate-90 duration-300"
+                onClick={() => setActiveProject(null)}
+                className="absolute -top-16 right-0 text-white hover:text-cyan-400 transition-colors"
               >
-                <X size={28} />
+                <X size={40} />
               </button>
               <video
-                ref={modalVideoRef}
-                className="w-full h-full"
+                ref={videoRef}
+                className="w-full h-full rounded-3xl shadow-2xl border border-white/10"
                 controls
                 autoPlay
-                playsInline
-                key={activeProject.modalVideo}
               >
                 <source src={activeProject.modalVideo} type="video/mp4" />
               </video>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -783,282 +529,216 @@ const FeaturedProjects = () => {
   );
 };
 
-// 7. Project List
 const ProjectList = () => {
   const { t } = useLanguage();
-  const scrollContainerRef = useRef(null);
+  const scrollRef = useRef(null);
 
-  // Card dimensions logic
-  // Desktop: 380px width + 24px gap = 404px per unit
-  // Mobile: 300px width + 24px gap = 324px per unit
-  const getItemWidth = () => {
-    return window.innerWidth >= 768 ? 404 : 324;
-  };
-
-  const scroll = (direction) => {
-    if (scrollContainerRef.current) {
-      const { current } = scrollContainerRef;
-      // CHANGE: Scroll by 3 units (Full "Page" of 3 columns)
-      const scrollAmount = getItemWidth() * 3;
-
-      if (direction === "left") {
-        current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-      } else {
-        current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-      }
-    }
+  const scroll = (dir) => {
+    const amount = window.innerWidth >= 768 ? 404 * 3 : 324 * 2;
+    scrollRef.current.scrollBy({
+      left: dir === "left" ? -amount : amount,
+      behavior: "smooth",
+    });
   };
 
   return (
-    <section className="py-24 bg-zinc-950 flex justify-center">
-      {/* 
-        Constraint Container 
-        max-w-[1250px] is calculated to fit exactly 3 cards + gaps (approx 1200px).
-        This prevents a 4th column from ever appearing, forcing the 7th item to overflow.
-      */}
-      <div className="w-full max-w-[1350px] px-4">
-        {/* Header */}
-        <div className="flex justify-between items-end mb-8 px-2">
-          <h2 className="text-4xl font-bold">{t.projects.title}</h2>
-          <div className="hidden md:block text-gray-500 text-sm font-mono">
-            {PROJECTS.length} PROJECTS
+    <section className="py-32 bg-black/10 backdrop-blur-md">
+      <div className="max-w-[1400px] mx-auto px-6">
+        <div className="flex justify-between items-end mb-16 px-2">
+          <h2 className="text-5xl font-black text-white tracking-tighter">
+            Projects
+          </h2>
+          <div className="flex gap-4">
+            <button
+              onClick={() => scroll("left")}
+              className="p-4 border border-white/10 rounded-full hover:bg-cyan-500 text-white transition-all shadow-lg"
+              aria-label="Scroll Left"
+            >
+              <ChevronLeft />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="p-4 border border-white/10 rounded-full hover:bg-cyan-500 text-white transition-all shadow-lg"
+              aria-label="Scroll Right"
+            >
+              <ChevronRight />
+            </button>
           </div>
         </div>
 
-        {/* --- Layout Container --- */}
-        <div className="flex items-center gap-4">
-          {/* Left Button */}
-          <button
-            onClick={() => scroll("left")}
-            className="hidden md:flex flex-shrink-0 p-3 rounded-full bg-zinc-800 border border-white/10 text-white hover:bg-primary hover:scale-110 transition-all shadow-xl z-10"
-            aria-label="Scroll Left"
-          >
-            <ChevronLeft size={24} />
-          </button>
+        <div
+          ref={scrollRef}
+          className="grid grid-rows-2 grid-flow-col gap-8 overflow-x-auto pb-8 no-scrollbar snap-x snap-mandatory"
+        >
+          {PROJECTS.map((project, i) => {
+            const trans = t.projects.list[i] || t.projects.list[0];
 
-          {/* 
-             Grid Container 
-             - snap-x snap-mandatory: Forces items to align perfectly when scrolling stops
-          */}
-          <div
-            ref={scrollContainerRef}
-            className="grid grid-rows-2 grid-flow-col gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar w-full snap-x snap-mandatory"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {PROJECTS.map((project, index) => {
-              const translatedProject =
-                t.projects.list[index] || t.projects.list[0]; // Fallback if translation missing for new item
-
-              return (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3 }}
-                  // snap-start: Ensures this card snaps to the left edge
-                  className="w-[300px] md:w-[380px] group/card snap-start"
-                >
-                  {/* Image/Video Card */}
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-xl mb-3 border border-white/5 bg-zinc-900">
+            return (
+              <motion.div
+                key={project.id || i}
+                className="w-[320px] md:w-[400px] snap-start group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="relative aspect-video overflow-hidden rounded-[2rem] mb-6 border border-white/10 bg-white/5 shadow-xl">
+                  {project.video ? (
                     <video
                       src={project.video}
                       poster={project.image}
-                      className="w-full h-full object-cover opacity-80 group-hover/card:scale-110 group-hover/card:opacity-100 transition-all duration-700 ease-out"
-                      autoPlay
+                      className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
                       muted
                       loop
+                      autoPlay
                       playsInline
                     />
+                  ) : (
+                    <img
+                      src={project.image || "/photos/placeholder.jpg"}
+                      alt={trans.title}
+                      className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                    />
+                  )}
 
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                    <a
+                      href={project.gitUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-4 bg-white text-black rounded-full hover:scale-110 hover:bg-cyan-500 hover:text-white transition-all shadow-2xl"
+                    >
+                      <Github size={24} />
+                    </a>
+                    {project.demoUrl && (
                       <a
                         href={project.demoUrl}
                         target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
+                        rel="noreferrer"
+                        className="p-4 bg-white text-black rounded-full hover:scale-110 hover:bg-cyan-500 hover:text-white transition-all shadow-2xl"
                       >
-                        <ExternalLink size={20} />
+                        <ExternalLink size={24} />
                       </a>
-                      <a
-                        href={project.gitUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 bg-white text-black rounded-full hover:bg-primary hover:text-white transition-colors"
-                      >
-                        <Github size={20} />
-                      </a>
-                    </div>
+                    )}
                   </div>
+                </div>
 
-                  {/* Text Content */}
-                  <div className="flex justify-between items-start px-1">
-                    <div>
-                      <h3 className="text-lg font-bold group-hover/card:text-primary transition-colors">
-                        {translatedProject?.title || project.title}
-                      </h3>
-                      <p className="text-xs text-gray-400 mt-1 line-clamp-2">
-                        {translatedProject?.description || project.description}
-                      </p>
-                    </div>
-                    <span className="text-[10px] font-bold tracking-wider border border-white/10 bg-white/5 px-2 py-1 rounded text-gray-400 uppercase whitespace-nowrap ml-3">
-                      {project.category}
-                    </span>
+                <div className="flex justify-between px-2 items-start">
+                  <div className="max-w-[70%]">
+                    <h3 className="font-black text-lg text-white group-hover:text-cyan-400 transition-colors truncate">
+                      {trans.title}
+                    </h3>
+                    <p className="text-xs text-blue-100/40 line-clamp-2 mt-1 font-medium leading-relaxed">
+                      {trans.description}
+                    </p>
                   </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Right Button */}
-          <button
-            onClick={() => scroll("right")}
-            className="hidden md:flex flex-shrink-0 p-3 rounded-full bg-zinc-800 border border-white/10 text-white hover:bg-primary hover:scale-110 transition-all shadow-xl z-10"
-            aria-label="Scroll Right"
-          >
-            <ChevronRight size={24} />
-          </button>
+                  <span className="text-[10px] h-fit border border-cyan-500/30 px-3 py-1.5 rounded-lg text-cyan-400 font-black uppercase tracking-widest whitespace-nowrap bg-cyan-500/5">
+                    {project.category}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
-
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </section>
   );
 };
 
-// 8. Contact
 const Contact = () => {
   const { t } = useLanguage();
   const form = useRef();
-  const [status, setStatus] = useState(""); // 'sending', 'success', 'error'
+  const [status, setStatus] = useState("");
 
   const sendEmail = (e) => {
     e.preventDefault();
     setStatus("sending");
-
-    // REPLACE THESE VALUES WITH YOUR ACTUAL EMAILJS KEYS
-    const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
-    const TEMPLATE_ID = import.meta.env.VITE_TEMPLATE_ID;
-    const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
-
-    emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY).then(
-      (result) => {
-        console.log(result.text);
+    emailjs
+      .sendForm(
+        import.meta.env.VITE_SERVICE_ID,
+        import.meta.env.VITE_TEMPLATE_ID,
+        form.current,
+        import.meta.env.VITE_PUBLIC_KEY,
+      )
+      .then(() => {
         setStatus("success");
-        e.target.reset(); // Clear the form
-
-        // Reset button text after 3 seconds
+        e.target.reset();
         setTimeout(() => setStatus(""), 3000);
-      },
-      (error) => {
-        console.log(error.text);
+      })
+      .catch(() => {
         setStatus("error");
-
-        // Reset button text after 3 seconds
         setTimeout(() => setStatus(""), 3000);
-      },
-    );
+      });
   };
 
   return (
-    <section id="contact" className="py-24 px-6 relative">
+    <section id="contact" className="py-32 px-6 bg-black/40 backdrop-blur-3xl">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
-            {t.contact.title}
+        <div className="text-center mb-24">
+          <h2 className="text-6xl md:text-8xl font-black mb-6 text-white tracking-tighter">
+            Let's Dive{" "}
+            <span className="text-cyan-500 text-shadow-glow">In</span>
           </h2>
-          <p className="text-xl text-gray-400">{t.contact.subtitle}</p>
+          <p className="text-xl text-blue-100/40 font-medium">
+            {t.contact.subtitle}
+          </p>
         </div>
-
-        <div className="grid md:grid-cols-3 gap-12">
-          {/* Left Column: Contact Details */}
-          <div className="md:col-span-1 space-y-8">
+        <div className="grid md:grid-cols-3 gap-16">
+          <div className="space-y-12">
             <div>
-              <h4 className="text-gray-400 font-mono mb-2">Email</h4>
+              <h4 className="text-cyan-500 font-mono text-xs uppercase tracking-widest mb-4 font-black">
+                Message me
+              </h4>
               <a
                 href="mailto:hal.chung.chingyan.2025@gmail.com"
-                className="text-lg md:text-xl hover:text-primary transition-colors break-words"
+                className="text-xl font-bold hover:text-cyan-400 transition-colors break-words"
               >
                 hal.chung.chingyan.2025@gmail.com
               </a>
             </div>
             <div>
-              <h4 className="text-gray-400 font-mono mb-2">Socials</h4>
-              <div className="flex gap-4">
-                <a
-                  href="https://github.com/WillYan0224"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
-                >
-                  <Github size={24} />
-                </a>
-              </div>
+              <h4 className="text-cyan-500 font-mono text-xs uppercase tracking-widest mb-4 font-black">
+                Socials
+              </h4>
+              <a
+                href="https://github.com/WillYan0224"
+                target="_blank"
+                rel="noreferrer"
+                className="text-white hover:text-cyan-400 transition-colors inline-block"
+              >
+                <Github size={40} />
+              </a>
             </div>
           </div>
-
-          {/* Right Column: Form */}
-          <div className="md:col-span-2 bg-zinc-900 p-8 rounded-2xl border border-white/5">
-            <form ref={form} onSubmit={sendEmail} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400">
-                    {t.contact.name}
-                  </label>
-                  <input
-                    required
-                    name="user_name"
-                    type="text"
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 focus:outline-none focus:border-primary transition-colors"
-                    placeholder="John Doe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400">
-                    {t.contact.email}
-                  </label>
-                  <input
-                    required
-                    name="user_email"
-                    type="email"
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 focus:outline-none focus:border-primary transition-colors"
-                    placeholder="john@example.com"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">
-                  {t.contact.message}
-                </label>
-                <textarea
+          <div className="md:col-span-2 bg-white/5 p-10 md:p-16 rounded-[3rem] border border-white/10 backdrop-blur-2xl shadow-2xl">
+            <form ref={form} onSubmit={sendEmail} className="space-y-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <input
                   required
-                  name="message"
-                  rows="4"
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 focus:outline-none focus:border-primary transition-colors"
-                  placeholder="Tell me about your thought ..."
+                  name="user_name"
+                  placeholder={t.contact.name}
+                  className="w-full bg-white/5 border-b border-white/20 p-4 focus:outline-none focus:border-cyan-500 text-white text-lg transition-colors placeholder:text-white/20"
+                />
+                <input
+                  required
+                  name="user_email"
+                  type="email"
+                  placeholder={t.contact.email}
+                  className="w-full bg-white/5 border-b border-white/20 p-4 focus:outline-none focus:border-cyan-500 text-white text-lg transition-colors placeholder:text-white/20"
                 />
               </div>
-
-              <button
-                type="submit"
-                disabled={status === "sending"}
-                className={`w-full font-bold py-4 rounded-lg transition-all disabled:opacity-50 ${
-                  status === "error"
-                    ? "bg-red-500 text-white hover:bg-red-600"
-                    : "bg-white text-black hover:bg-gray-200"
-                }`}
-              >
+              <textarea
+                required
+                name="message"
+                rows="4"
+                placeholder="Briefly describe your idea..."
+                className="w-full bg-white/5 border-b border-white/20 p-4 focus:outline-none focus:border-cyan-500 text-white text-lg transition-colors placeholder:text-white/20"
+              />
+              <button className="w-full bg-cyan-500 hover:bg-white hover:text-cyan-600 text-white font-black py-6 rounded-2xl transition-all shadow-xl shadow-cyan-500/20 uppercase tracking-widest">
                 {status === "sending"
-                  ? t.contact.btn_sending
+                  ? "Sending..."
                   : status === "success"
-                    ? t.contact.btn_sent
-                    : status === "error"
-                      ? "Error. Try again."
-                      : t.contact.btn_send}
+                    ? "Message Sent!"
+                    : t.contact.btn_send}
               </button>
             </form>
           </div>
@@ -1068,31 +748,42 @@ const Contact = () => {
   );
 };
 
-const Footer = () => (
-  <footer className="py-8 text-center text-gray-500 text-sm border-t border-white/10">
-    <p>© {new Date().getFullYear()} Yan. All rights reserved.</p>
-  </footer>
-);
+// --- MAIN APP ---
 
-// --- MAIN APP (FIXED) ---
 function App() {
-  const [language, setLanguage] = useState("en"); // 1. Define State
-  const t = TRANSLATIONS[language]; // 2. Derive translations
+  const [language, setLanguage] = useState("en");
+  const t = TRANSLATIONS[language];
 
   return (
-    // 3. Wrap everything in Provider
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      <div className="min-h-screen bg-dark text-white selection:bg-primary selection:text-white">
+      <div className="min-h-screen text-white selection:bg-cyan-400 selection:text-black bg-gradient-to-b from-[#004C99] to-[#001933]">
+        {/* Global PBR Bubbles: Fixed background behind z-10 content */}
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-40">
+          <Canvas camera={{ position: [0, 0, 10] }}>
+            <ambientLight intensity={1} />
+            <pointLight position={[5, 5, 5]} intensity={5} color="#ffffff" />
+            <PBRBubbles count={45} area={25} />
+          </Canvas>
+        </div>
+
         <Navbar />
-        <Hero />
-        <TechMarquee />
-        <SectionSeparator />
-        <About />
-        <FeaturedProjects />
-        <ProjectList />
-        <Contact />
-        <Footer />
+        <main className="relative z-10">
+          <Hero />
+          <TechMarquee />
+          <About />
+          <FeaturedProjects />
+          <ProjectList />
+          <Contact />
+          <footer className="py-16 text-center text-blue-100/20 text-xs border-t border-white/5 bg-black/40 backdrop-blur-md">
+            © {new Date().getFullYear()} Yan. Deep Dive Graphics Portfolio.
+          </footer>
+        </main>
       </div>
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        html { scroll-behavior: smooth; }
+        .text-shadow-glow { text-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
+      `}</style>
     </LanguageContext.Provider>
   );
 }
