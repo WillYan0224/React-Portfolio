@@ -1,4 +1,5 @@
 import "./App.css";
+import HeroWaterCanvas from "./components/HeroWaterCanvas";
 import React, {
   useState,
   useEffect,
@@ -259,97 +260,6 @@ const AmbientBubbles = ({
   );
 };
 
-const LightShafts = () => {
-  return (
-    <>
-      <div className="light-shaft shaft-1" />
-      <div className="light-shaft shaft-2" />
-      <div className="light-shaft shaft-3" />
-    </>
-  );
-};
-
-const Waterline = ({ y }) => {
-  return (
-    <motion.div
-      style={{ y }}
-      className="absolute left-0 top-0 w-full h-[22vh] pointer-events-none z-[6]"
-    >
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[8vh] bg-gradient-to-b from-white/8 via-cyan-100/10 to-transparent blur-2xl opacity-70" />
-
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[26px] overflow-hidden opacity-55">
-        <div className="waterline-shimmer-track absolute inset-0">
-          <div className="waterline-shimmer absolute inset-0" />
-        </div>
-      </div>
-
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[120px] overflow-hidden opacity-95">
-        <div className="waterline-drift-track absolute inset-0">
-          <svg
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-[240%] h-[120px]"
-            viewBox="0 0 1440 180"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,92
-                 C60,38 120,146 180,92
-                 C240,38 300,146 360,92
-                 C420,38 480,146 540,92
-                 C600,38 660,146 720,92
-                 C780,38 840,146 900,92
-                 C960,38 1020,146 1080,92
-                 C1140,38 1200,146 1260,92
-                 C1320,58 1380,66 1440,92"
-              fill="none"
-              stroke="rgba(228,248,255,0.74)"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
-
-        <div className="waterline-drift-track-reverse absolute inset-0 opacity-60">
-          <svg
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-[240%] h-[120px]"
-            viewBox="0 0 1440 180"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,98
-                 C90,66 180,130 270,98
-                 C360,66 450,130 540,98
-                 C630,66 720,130 810,98
-                 C900,66 990,130 1080,98
-                 C1170,66 1260,130 1350,98
-                 C1380,92 1410,90 1440,98"
-              fill="none"
-              stroke="rgba(120,220,255,0.24)"
-              strokeWidth="8"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div
-        className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[88px] opacity-75"
-        style={{
-          maskImage:
-            "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
-        }}
-      >
-        <div className="waterline-cut-band absolute inset-0" />
-      </div>
-
-      <div className="absolute inset-x-0 top-[calc(50%-14px)] h-[30px] bg-gradient-to-b from-white/8 to-transparent blur-xl opacity-38" />
-      <div className="absolute inset-x-0 top-1/2 h-[6vh] bg-gradient-to-b from-cyan-200/8 via-cyan-300/[0.04] to-transparent blur-xl opacity-45" />
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[36px] waterline-noise opacity-20 mix-blend-screen" />
-    </motion.div>
-  );
-};
-
 const UnderwaterDivider = () => {
   return (
     <section className="relative h-[28vh] overflow-hidden pointer-events-none">
@@ -456,6 +366,7 @@ const Navbar = () => {
 const Hero = () => {
   const { t } = useLanguage();
   const [roleIndex, setRoleIndex] = useState(0);
+  const [shaderScroll, setShaderScroll] = useState(0);
   const [extraBubbleDensity, setExtraBubbleDensity] = useState(0);
   const heroRef = useRef(null);
   const ROLES = t.hero.roles;
@@ -474,64 +385,26 @@ const Hero = () => {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const mapped = Math.max(0, Math.min(1, (latest - 0.28) / 0.52));
-    setExtraBubbleDensity(mapped);
+    const bubbleMapped = Math.max(0, Math.min(1, (latest - 0.2) / 0.5));
+    setExtraBubbleDensity(bubbleMapped);
+
+    const shaderMapped = Math.max(0, Math.min(1, latest));
+    setShaderScroll(shaderMapped);
   });
 
-  const waterlineY = useTransform(
-    scrollYProgress,
-    [0.08, 0.72],
-    ["36vh", "-8vh"],
-  );
-
-  const underwaterOpacity = useTransform(scrollYProgress, [0.18, 0.72], [0, 1]);
-  const bubblesOpacity = useTransform(scrollYProgress, [0.3, 0.82], [0.08, 1]);
-  const surfaceOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0.35]);
-
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const bubblesOpacity = useTransform(scrollYProgress, [0.15, 0.8], [0.18, 1]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 72]);
   const contentOpacity = useTransform(
     scrollYProgress,
-    [0, 0.62, 0.88],
-    [1, 0.9, 0.12],
+    [0, 0.72, 1],
+    [1, 0.92, 0.05],
   );
-  const contentScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.94]);
-
-  const cardBandOpacity = useTransform(
-    scrollYProgress,
-    [0.16, 0.34, 0.58],
-    [0, 0.9, 0.18],
-  );
-
-  const cardBandScaleX = useTransform(
-    scrollYProgress,
-    [0.2, 0.4, 0.68],
-    [0.985, 1.018, 1],
-  );
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.97]);
 
   return (
-    <section ref={heroRef} className="relative h-[220vh]">
+    <section ref={heroRef} className="relative h-[165vh]">
       <div className="sticky top-0 h-screen overflow-hidden bg-[#004c99]">
-        <motion.div
-          style={{ opacity: surfaceOpacity }}
-          className="absolute inset-0"
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-[#68c8ff] via-[#1f7dd1] to-[#004c99]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.22),transparent_32%)]" />
-          <div className="absolute inset-x-0 top-[14%] h-[34%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.10),transparent_70%)]" />
-          <div className="absolute inset-x-0 top-[56%] h-[18vh] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08),transparent_72%)] blur-2xl" />
-        </motion.div>
-
-        <motion.div
-          style={{ opacity: underwaterOpacity }}
-          className="absolute inset-0 pointer-events-none"
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0b4b7a]/10 via-[#08345a]/45 to-[#02101f]/92" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(90,220,255,0.12),transparent_45%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(0,0,0,0.35),transparent_45%)]" />
-          <LightShafts />
-        </motion.div>
-
-        <Waterline y={waterlineY} />
+        <HeroWaterCanvas scroll={shaderScroll} />
 
         <motion.div
           style={{ opacity: bubblesOpacity }}
@@ -540,13 +413,13 @@ const Hero = () => {
           <AmbientBubbles
             variant="hero"
             extraDensity={extraBubbleDensity}
-            scale={2.3}
-            baseOpacity={0.5}
-            extraOpacityBase={0.1}
-            extraOpacityGain={0.3}
-            borderOpacity={0.26}
-            fillOpacity={0.04}
-            blurPx={0.18}
+            scale={1.95}
+            baseOpacity={0.32}
+            extraOpacityBase={0.05}
+            extraOpacityGain={0.16}
+            borderOpacity={0.18}
+            fillOpacity={0.025}
+            blurPx={0.14}
             glow
             fresnel
             centerTransparency={0.92}
@@ -563,27 +436,13 @@ const Hero = () => {
           }}
           className="relative z-10 flex h-full items-center px-6 md:px-20"
         >
-          <div className="max-w-[74rem] w-full">
+          <div className="max-w-[74rem] w-full translate-x-4 translate-y-6 md:translate-x-10 md:translate-y-32">
             <div className="backdrop-blur-xl bg-black/20 border border-white/10 p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-              <motion.div
-                style={{
-                  y: waterlineY,
-                  opacity: cardBandOpacity,
-                  scaleX: cardBandScaleX,
-                }}
-                className="absolute left-[-6%] w-[112%] h-[90px] -translate-y-1/2 pointer-events-none z-[1]"
-              >
-                <div className="absolute inset-0 backdrop-blur-md bg-white/[0.04]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-cyan-200/10 to-transparent" />
-                <div className="absolute inset-0 waterline-noise mix-blend-screen opacity-25" />
-                <div className="absolute inset-0 card-water-distort-band" />
-              </motion.div>
-
               <div className="relative z-[2]">
                 <h2 className="text-xl md:text-2xl text-cyan-300 font-mono mb-6 flex items-center gap-2 whitespace-nowrap">
                   <span>{t.hero.greeting}</span>
 
-                  <div className="relative ml-2 h-8 w-72 flex items-center overflow-hidden">
+                  <div className="relative ml-2 h-8 w-[20rem] md:w-[28rem] flex items-center overflow-hidden">
                     <AnimatePresence mode="wait">
                       <motion.span
                         key={ROLES[roleIndex]}
@@ -1205,7 +1064,6 @@ function App() {
           <TechMarquee />
           <About />
           <FeaturedProjects />
-          <UnderwaterDivider />
           <ProjectList />
           <Contact />
 
