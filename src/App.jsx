@@ -260,104 +260,134 @@ const AmbientBubbles = ({
   );
 };
 
-const UnderwaterDivider = () => {
-  return (
-    <section className="relative h-[28vh] overflow-hidden pointer-events-none">
-      <AmbientBubbles
-        variant="section"
-        scale={1.05}
-        extraDensity={0.3}
-        baseOpacity={0.14}
-        extraOpacityBase={0.04}
-        className="z-0"
-      />
-
-      <div className="absolute inset-0 bg-gradient-to-b from-[#061a2d]/0 via-[#082847]/55 to-[#082847]/90" />
-      <div className="absolute inset-x-0 top-[24%] h-[90px]">
-        <div className="waterline-drift-track absolute inset-0 opacity-45">
-          <svg
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-[240%] h-[100px]"
-            viewBox="0 0 1440 180"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,92
-                 C60,38 120,146 180,92
-                 C240,38 300,146 360,92
-                 C420,38 480,146 540,92
-                 C600,38 660,146 720,92
-                 C780,38 840,146 900,92
-                 C960,38 1020,146 1080,92
-                 C1140,38 1200,146 1260,92
-                 C1320,58 1380,66 1440,92"
-              fill="none"
-              stroke="rgba(180,240,255,0.34)"
-              strokeWidth="2"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(90,220,255,0.08),transparent_55%)]" />
-      <div className="light-shaft shaft-1 opacity-20" />
-      <div className="light-shaft shaft-2 opacity-14" />
-    </section>
-  );
-};
-
 // --- 3. UI COMPONENTS ---
 const Navbar = () => {
   const { language, setLanguage, t } = useLanguage();
+  const [activeSection, setActiveSection] = useState(null);
+
+  useEffect(() => {
+    const sectionIds = ["about", "work", "contact"];
+
+    const updateActiveSection = () => {
+      let current = null;
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+
+        const rect = el.getBoundingClientRect();
+        const triggerTop = window.innerHeight * 0.28;
+
+        if (rect.top <= triggerTop && rect.bottom >= triggerTop) {
+          current = id;
+          break;
+        }
+      }
+
+      setActiveSection(current);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveSection);
+    };
+  }, []);
+
+  const navItems = [
+    { id: "about", label: t.nav.about },
+    { id: "work", label: t.nav.work },
+    { id: "contact", label: t.nav.contact },
+  ];
 
   return (
-    <nav className="fixed top-0 w-full px-8 py-5 grid grid-cols-3 items-center z-[100] bg-[#0a0a0a]/90 backdrop-blur-3xl border-b border-white/10 text-white shadow-2xl">
-      <div className="justify-self-start text-2xl font-black tracking-tighter">
-        PORTFOLIO.
-      </div>
+    <nav className="fixed top-4 left-0 right-0 z-[100] px-4 md:px-6">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="relative flex items-center justify-between rounded-[1.75rem] border border-white/10 bg-[#04131d]/65 px-5 md:px-7 py-3 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.28)] overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
+          <div className="absolute inset-x-0 top-0 h-px bg-white/20" />
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(120,220,255,0.10),transparent_55%)]" />
 
-      <div className="justify-self-center hidden md:flex gap-12 font-bold text-sm uppercase tracking-[0.2em] text-gray-300">
-        <a href="#about" className="hover:text-cyan-400 transition-all">
-          {t.nav.about}
-        </a>
-        <a href="#work" className="hover:text-cyan-400 transition-all">
-          {t.nav.work}
-        </a>
-        <a href="#contact" className="hover:text-cyan-400 transition-all">
-          {t.nav.contact}
-        </a>
-      </div>
+          <div className="relative z-10 flex items-center gap-6">
+            <a
+              href="#"
+              className="text-2xl font-black tracking-tighter text-white"
+            >
+              PORTFOLIO.
+            </a>
+          </div>
 
-      <div className="justify-self-end flex items-center gap-6">
-        <div className="flex gap-4 items-center border-l border-white/10 pl-6">
-          <button
-            onClick={() => setLanguage("en")}
-            className={`text-sm font-bold ${
-              language === "en" ? "text-cyan-400" : "text-gray-500"
-            }`}
-          >
-            EN
-          </button>
+          <div className="relative z-10 hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.04] p-1.5 backdrop-blur-xl">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
 
-          <button
-            onClick={() => setLanguage("jp")}
-            className={`text-sm font-bold ${
-              language === "jp" ? "text-cyan-400" : "text-gray-500"
-            }`}
-          >
-            JP
-          </button>
+              return (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className="relative px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.28em] transition-colors"
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="navbar-active-pill"
+                      className="absolute inset-0 rounded-full border border-cyan-300/20 bg-cyan-300/10 shadow-[0_0_24px_rgba(34,211,238,0.12)]"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+
+                  <span
+                    className={`relative z-10 ${
+                      isActive
+                        ? "text-cyan-200"
+                        : "text-white/68 hover:text-white"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+
+          <div className="relative z-10 flex items-center gap-3 md:gap-4">
+            <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all ${
+                  language === "en"
+                    ? "bg-cyan-400/15 text-cyan-200 shadow-[inset_0_0_0_1px_rgba(103,232,249,0.25)]"
+                    : "text-white/45 hover:text-white/80"
+                }`}
+              >
+                EN
+              </button>
+
+              <button
+                onClick={() => setLanguage("jp")}
+                className={`rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all ${
+                  language === "jp"
+                    ? "bg-cyan-400/15 text-cyan-200 shadow-[inset_0_0_0_1px_rgba(103,232,249,0.25)]"
+                    : "text-white/45 hover:text-white/80"
+                }`}
+              >
+                JP
+              </button>
+            </div>
+
+            <a
+              href="#contact"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-cyan-300/35 bg-cyan-400/8 px-5 md:px-6 py-3 text-[12px] font-bold text-white shadow-[0_0_24px_rgba(34,211,238,0.12)] transition-all duration-300 hover:border-cyan-200/60 hover:bg-cyan-300/14 hover:shadow-[0_0_32px_rgba(34,211,238,0.22)]"
+            >
+              <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent)] translate-x-[-120%] group-hover:translate-x-[120%] transition-transform duration-1000" />
+              <span className="relative z-10">{t.nav.btn}</span>
+            </a>
+          </div>
         </div>
-
-        <a
-          href="#contact"
-          className="relative hidden md:inline-flex h-12 overflow-hidden rounded-full p-[2px] focus:outline-none group"
-        >
-          <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#22d3ee_0%,#3b82f6_50%,#22d3ee_100%)]" />
-          <span className="relative inline-flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-black/90 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-colors duration-500 ease-out group-hover:text-white">
-            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-700 ease-out opacity-60 bg-[conic-gradient(from_90deg_at_50%_50%,#22d3ee_0%,#3b82f6_50%,#22d3ee_100%)] blur-lg" />
-            <span className="relative z-10">{t.nav.btn}</span>
-          </span>
-        </a>
       </div>
     </nav>
   );
@@ -616,7 +646,7 @@ const About = () => {
           </div>
         </motion.div>
 
-        <div className="relative rounded-[2.5rem] overflow-hidden aspect-[4/5] border border-white/10 shadow-2xl rotate-2">
+        <div className="relative rounded-[2.5rem] overflow-hidden aspect-[4/5] border border-white/10 shadow-2xl">
           <img
             src="/photos/HKport_001.jpg"
             alt="About"

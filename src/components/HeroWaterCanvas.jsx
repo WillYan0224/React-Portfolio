@@ -204,17 +204,17 @@ void main() {
 
   vec3 col = mix(color, seaColor, pow(clamp(dist, 0.0, 1.0), 0.2));
 
-  float shaftAngle = mix(-0.16, -0.26, uScroll);
-  col += vec3(225.0, 230.0, 200.0) / 255.0 * lightShafts(uv, shaftAngle) * 0.9;
+  float shaftAngle = mix(-0.10, -0.22, uScroll);
+  col += vec3(232.0, 255.0, 214.0) / 255.0 * lightShafts(uv, shaftAngle) * 0.7;
 
   // mild underwater depth tint only, no beam
   float depthFog = smoothstep(0.12, -1.0, uv.y);
-  col = mix(col, vec3(8.0, 76.0, 132.0) / 255.0, depthFog * 0.10);
+  col = mix(col, vec3(20.0, 86.0, 70.0) / 255.0, depthFog * 0.2);
 
   // keep lens flare subtle
   float flareAngle = mix(0.18, 0.55, uScroll);
-  float flare = lensFlare(uv, vec2(-0.28, 0.44), flareAngle, 0.28);
-  col += vec3(0.65, 0.92, 1.0) * flare * 0.18;
+  float flare = lensFlare(uv, vec2(-0.22, 0.42), flareAngle, 0.38);
+  col += vec3(0.90, 1.00, 0.84) * flare * 0.32;
 
   vec2 q = vUv;
   col *= 0.76 + 0.24 * pow(16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y), 0.2);
