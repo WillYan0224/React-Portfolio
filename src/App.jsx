@@ -1,12 +1,7 @@
 import "./App.css";
 import HeroWaterCanvas from "./components/HeroWaterCanvas";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  createContext,
-  useContext,
-} from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { AppContext, useAppContext } from "./context/AppContext";
 import {
   motion,
   AnimatePresence,
@@ -29,10 +24,7 @@ import emailjs from "@emailjs/browser";
 import { SKILLS_DATA, DEVTOOL_DATA } from "./data/skills";
 import { PROJECTS } from "./data/porjects";
 import { TRANSLATIONS } from "./data/translations";
-
-// --- 1. CONTEXT SETUP ---
-const LanguageContext = createContext();
-const useLanguage = () => useContext(LanguageContext);
+import { THEME_PRESETS } from "./data/themePresets";
 
 // --- 2. LIGHTWEIGHT FX COMPONENTS ---
 const BASE_HERO_BUBBLES = [
@@ -262,7 +254,7 @@ const AmbientBubbles = ({
 
 // --- 3. UI COMPONENTS ---
 const Navbar = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, theme } = useAppContext();
   const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
@@ -304,10 +296,15 @@ const Navbar = () => {
   return (
     <nav className="fixed top-4 left-0 right-0 z-[100] px-4 md:px-6">
       <div className="mx-auto max-w-[1440px]">
-        <div className="relative flex items-center justify-between rounded-[1.75rem] border border-white/10 bg-[#04131d]/65 px-5 md:px-7 py-3 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.28)] overflow-hidden">
+        <div className="relative flex items-center justify-between rounded-[1.75rem] border border-white/10 px-5 md:px-7 py-3 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.28)] overflow-hidden bg-[#04131d]/65">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
           <div className="absolute inset-x-0 top-0 h-px bg-white/20" />
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(120,220,255,0.10),transparent_55%)]" />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(circle at top, ${theme.accent}18, transparent 55%)`,
+            }}
+          />
 
           <div className="relative z-10 flex items-center gap-6">
             <a
@@ -331,21 +328,22 @@ const Navbar = () => {
                   {isActive && (
                     <motion.span
                       layoutId="navbar-active-pill"
-                      className="absolute inset-0 rounded-full border border-cyan-300/20 bg-cyan-300/10 shadow-[0_0_24px_rgba(34,211,238,0.12)]"
-                      transition={{
-                        type: "spring",
-                        stiffness: 380,
-                        damping: 30,
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        border: `1px solid ${theme.accent}33`,
+                        background: `${theme.accent}18`,
+                        boxShadow: `0 0 24px ${theme.accent}22`,
                       }}
                     />
                   )}
 
                   <span
-                    className={`relative z-10 ${
-                      isActive
-                        ? "text-cyan-200"
-                        : "text-white/68 hover:text-white"
-                    }`}
+                    className="relative z-10"
+                    style={{
+                      color: isActive
+                        ? theme.accentMuted
+                        : "rgba(255,255,255,0.68)",
+                    }}
                   >
                     {item.label}
                   </span>
@@ -358,22 +356,38 @@ const Navbar = () => {
             <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1">
               <button
                 onClick={() => setLanguage("en")}
-                className={`rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all ${
-                  language === "en"
-                    ? "bg-cyan-400/15 text-cyan-200 shadow-[inset_0_0_0_1px_rgba(103,232,249,0.25)]"
-                    : "text-white/45 hover:text-white/80"
-                }`}
+                className="rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all"
+                style={{
+                  background:
+                    language === "en" ? `${theme.accent}22` : "transparent",
+                  color:
+                    language === "en"
+                      ? theme.accentMuted
+                      : "rgba(255,255,255,0.45)",
+                  boxShadow:
+                    language === "en"
+                      ? `inset 0 0 0 1px ${theme.accent}44`
+                      : "none",
+                }}
               >
                 EN
               </button>
 
               <button
                 onClick={() => setLanguage("jp")}
-                className={`rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all ${
-                  language === "jp"
-                    ? "bg-cyan-400/15 text-cyan-200 shadow-[inset_0_0_0_1px_rgba(103,232,249,0.25)]"
-                    : "text-white/45 hover:text-white/80"
-                }`}
+                className="rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all"
+                style={{
+                  background:
+                    language === "jp" ? `${theme.accent}22` : "transparent",
+                  color:
+                    language === "jp"
+                      ? theme.accentMuted
+                      : "rgba(255,255,255,0.45)",
+                  boxShadow:
+                    language === "jp"
+                      ? `inset 0 0 0 1px ${theme.accent}44`
+                      : "none",
+                }}
               >
                 JP
               </button>
@@ -381,10 +395,28 @@ const Navbar = () => {
 
             <a
               href="#contact"
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-cyan-300/35 bg-cyan-400/8 px-5 md:px-6 py-3 text-[12px] font-bold text-white shadow-[0_0_24px_rgba(34,211,238,0.12)] transition-all duration-300 hover:border-cyan-200/60 hover:bg-cyan-300/14 hover:shadow-[0_0_32px_rgba(34,211,238,0.22)]"
+              className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full p-[1px]"
+              style={{
+                background: `linear-gradient(135deg, ${theme.accent}88, rgba(255,255,255,0.10), ${theme.accent}44)`,
+                boxShadow: `0 0 28px ${theme.accent}22`,
+              }}
             >
-              <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent)] translate-x-[-120%] group-hover:translate-x-[120%] transition-transform duration-1000" />
-              <span className="relative z-10">{t.nav.btn}</span>
+              <span
+                className="relative inline-flex h-full items-center justify-center rounded-full px-6 text-[12px] font-bold tracking-[0.12em] text-white backdrop-blur-xl transition-all duration-300"
+                style={{
+                  background: "rgba(3,10,18,0.78)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <span
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: `radial-gradient(circle at 50% 0%, ${theme.accent}22, transparent 65%)`,
+                  }}
+                />
+                <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)] -translate-x-[140%] group-hover:translate-x-[140%] transition-transform duration-1000" />
+                <span className="relative z-10">{t.nav.btn}</span>
+              </span>
             </a>
           </div>
         </div>
@@ -393,8 +425,119 @@ const Navbar = () => {
   );
 };
 
+const ThemeDock = () => {
+  const { heroTheme, setHeroTheme } = useAppContext();
+  const { scrollY } = useScroll();
+
+  const dockYRaw = useTransform(scrollY, [0, 1400], [110, 190]);
+  const dockY = useSpring(dockYRaw, {
+    stiffness: 120,
+    damping: 22,
+    mass: 0.5,
+  });
+
+  const items = [
+    {
+      id: "ocean",
+      label: "Ocean",
+      preview: ["#67e8f9", "#60a5fa", "#001933"],
+      glow: "#67e8f9",
+    },
+    {
+      id: "forest",
+      label: "Forest",
+      preview: ["#86efac", "#34d399", "#081711"],
+      glow: "#86efac",
+    },
+    {
+      id: "desert",
+      label: "Desert",
+      preview: ["#fde68a", "#fdba74", "#1f1208"],
+      glow: "#fde68a",
+    },
+  ];
+
+  return (
+    <motion.div
+      style={{ y: dockY }}
+      className="hidden md:flex fixed left-4 lg:left-6 top-0 z-[96] flex-col gap-3"
+    >
+      <div className="rounded-[1.5rem] border border-white/10 bg-[#04131d]/60 backdrop-blur-2xl shadow-[0_8px_30px_rgba(0,0,0,0.28)] p-2">
+        {items.map((item) => {
+          const isActive = heroTheme === item.id;
+
+          return (
+            <button
+              key={item.id}
+              onClick={() => setHeroTheme(item.id)}
+              className="group relative w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-left transition-all duration-300"
+              style={{
+                background: isActive ? "rgba(255,255,255,0.07)" : "transparent",
+                boxShadow: isActive
+                  ? "inset 0 0 0 1px rgba(255,255,255,0.08)"
+                  : "none",
+                transform: isActive ? "translateX(4px)" : "translateX(0px)",
+              }}
+            >
+              {/* B. glow bar */}
+              <span
+                className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{
+                  background: item.glow,
+                  boxShadow: `0 0 24px ${item.glow}`,
+                  opacity: isActive ? 1 : undefined,
+                }}
+              />
+
+              {/* preview colors */}
+              <div className="flex h-8 w-8 shrink-0 overflow-hidden rounded-xl border border-white/10">
+                <span
+                  className="w-1/3 h-full"
+                  style={{ background: item.preview[0] }}
+                />
+                <span
+                  className="w-1/3 h-full"
+                  style={{ background: item.preview[1] }}
+                />
+                <span
+                  className="w-1/3 h-full"
+                  style={{ background: item.preview[2] }}
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <span
+                  className="text-[11px] font-bold uppercase tracking-[0.18em] transition-colors"
+                  style={{
+                    color: isActive
+                      ? "rgba(255,255,255,0.95)"
+                      : "rgba(255,255,255,0.55)",
+                  }}
+                >
+                  {item.label}
+                </span>
+
+                <span
+                  className="text-[10px] uppercase tracking-[0.14em]"
+                  style={{
+                    color: isActive
+                      ? "rgba(255,255,255,0.42)"
+                      : "rgba(255,255,255,0.28)",
+                  }}
+                >
+                  Theme
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+};
+
 const Hero = () => {
-  const { t } = useLanguage();
+  const { t, heroTheme, theme } = useAppContext();
   const [roleIndex, setRoleIndex] = useState(0);
   const [shaderScroll, setShaderScroll] = useState(0);
   const [extraBubbleDensity, setExtraBubbleDensity] = useState(0);
@@ -433,8 +576,8 @@ const Hero = () => {
 
   return (
     <section ref={heroRef} className="relative h-[165vh]">
-      <div className="sticky top-0 h-screen overflow-hidden bg-[#004c99]">
-        <HeroWaterCanvas scroll={shaderScroll} />
+      <div className="sticky top-0 h-screen overflow-hidden">
+        <HeroWaterCanvas scroll={shaderScroll} theme={heroTheme} />
 
         <motion.div
           style={{ opacity: bubblesOpacity }}
@@ -467,9 +610,18 @@ const Hero = () => {
           className="relative z-10 flex h-full items-center px-6 md:px-20"
         >
           <div className="max-w-[74rem] w-full translate-x-4 translate-y-6 md:translate-x-10 md:translate-y-32">
-            <div className="backdrop-blur-xl bg-black/20 border border-white/10 p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+            <div
+              className="backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative overflow-hidden"
+              style={{
+                background: theme.cardBg,
+                border: `1px solid ${theme.cardBorder}`,
+              }}
+            >
               <div className="relative z-[2]">
-                <h2 className="text-xl md:text-2xl text-cyan-300 font-mono mb-6 flex items-center gap-2 whitespace-nowrap">
+                <h2
+                  className="text-xl md:text-2xl font-mono mb-6 flex items-center gap-2 whitespace-nowrap"
+                  style={{ color: theme.accentSoft }}
+                >
                   <span>{t.hero.greeting}</span>
 
                   <div className="relative ml-2 h-8 w-[20rem] md:w-[28rem] flex items-center overflow-hidden">
@@ -490,7 +642,12 @@ const Hero = () => {
 
                 <h1 className="text-6xl md:text-7xl font-black leading-[0.9] mb-8 text-white tracking-tighter drop-shadow-2xl">
                   {t.hero.title_start}{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400">
+                  <span
+                    className="text-transparent bg-clip-text"
+                    style={{
+                      backgroundImage: `linear-gradient(to right, ${theme.titleFrom}, ${theme.titleTo})`,
+                    }}
+                  >
                     {t.hero.title_highlight}
                   </span>
                 </h1>
@@ -501,7 +658,19 @@ const Hero = () => {
 
                 <a
                   href="#work"
-                  className="inline-flex h-16 items-center justify-center rounded-2xl bg-cyan-500 px-12 text-sm font-black text-white hover:bg-white hover:text-cyan-600 transition-all shadow-xl shadow-cyan-500/20 uppercase tracking-widest"
+                  className="inline-flex h-16 items-center justify-center rounded-2xl px-12 text-sm font-black text-white transition-all shadow-xl uppercase tracking-widest"
+                  style={{
+                    backgroundColor: theme.buttonBg,
+                    boxShadow: `0 10px 30px ${theme.buttonBg}33`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.color = theme.buttonHoverText;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = theme.buttonBg;
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
                 >
                   {t.hero.cta}
                 </a>
@@ -515,10 +684,25 @@ const Hero = () => {
 };
 
 const TechMarquee = () => {
+  const { theme } = useAppContext();
+
   return (
-    <div className="py-20 bg-[#082847]/80 backdrop-blur-md overflow-hidden relative border-y border-white/10 flex flex-col gap-20">
-      <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#082847] to-transparent z-10" />
-      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#082847] to-transparent z-10" />
+    <div
+      className="py-20 backdrop-blur-md overflow-hidden relative border-y border-white/10 flex flex-col gap-20"
+      style={{ background: theme.sectionSurface }}
+    >
+      <div
+        className="absolute left-0 top-0 bottom-0 w-32 z-10"
+        style={{
+          background: `linear-gradient(to right, ${theme.sectionEdge}, transparent)`,
+        }}
+      />
+      <div
+        className="absolute right-0 top-0 bottom-0 w-32 z-10"
+        style={{
+          background: `linear-gradient(to left, ${theme.sectionEdge}, transparent)`,
+        }}
+      />
 
       <motion.div
         className="flex whitespace-nowrap"
@@ -531,7 +715,7 @@ const TechMarquee = () => {
               key={`row1-${index}`}
               className="mx-4 flex items-center gap-4 group cursor-default"
             >
-              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-cyan-400/50 group-hover:bg-white/10 transition-colors duration-300">
+              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 transition-colors duration-300">
                 <img
                   src={skill.icon}
                   alt={skill.name}
@@ -540,7 +724,10 @@ const TechMarquee = () => {
                   }`}
                 />
               </div>
-              <span className="text-xl font-bold text-cyan-100/35 group-hover:text-cyan-100 transition-colors uppercase tracking-tight">
+              <span
+                className="text-xl font-bold uppercase tracking-tight"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
                 {skill.name}
               </span>
             </div>
@@ -561,7 +748,7 @@ const TechMarquee = () => {
               key={`row2-${index}`}
               className="mx-4 flex items-center gap-4 group cursor-default"
             >
-              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-cyan-400/50 group-hover:bg-white/10 transition-colors duration-300">
+              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 transition-colors duration-300">
                 <img
                   src={devtool.icon}
                   alt={devtool.name}
@@ -570,7 +757,10 @@ const TechMarquee = () => {
                   }`}
                 />
               </div>
-              <span className="text-xl font-bold text-cyan-100/35 group-hover:text-cyan-100 transition-colors uppercase tracking-tight">
+              <span
+                className="text-xl font-bold uppercase tracking-tight"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
                 {devtool.name}
               </span>
             </div>
@@ -581,7 +771,7 @@ const TechMarquee = () => {
 };
 
 const About = () => {
-  const { t } = useLanguage();
+  const { t, theme } = useAppContext();
 
   return (
     <section
@@ -612,16 +802,24 @@ const About = () => {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-cyan-400 font-mono mb-4 uppercase tracking-[0.5em] text-xs font-bold">
+          <h2
+            className="font-mono mb-4 uppercase tracking-[0.5em] text-xs font-bold"
+            style={{ color: theme.accent }}
+          >
             {t.about.title}
           </h2>
 
           <h3 className="text-5xl md:text-6xl font-black mb-8 text-white tracking-tighter leading-tight">
             {t.about.headline_word1}{" "}
-            <span className="text-cyan-400">{t.about.headline_word2}</span>
+            <span style={{ color: theme.accent }}>
+              {t.about.headline_word2}
+            </span>
           </h3>
 
-          <p className="text-blue-50 text-lg mb-10 leading-relaxed border-l-4 border-cyan-500/30 pl-8 opacity-80">
+          <p
+            className="text-blue-50 text-lg mb-10 leading-relaxed border-l-4 pl-8 opacity-80"
+            style={{ borderColor: `${theme.accent}55` }}
+          >
             {t.about.bio1}
           </p>
 
@@ -630,7 +828,10 @@ const About = () => {
               <h4 className="text-5xl font-black text-white tracking-tighter">
                 4+
               </h4>
-              <p className="text-xs text-cyan-500 uppercase font-bold tracking-widest mt-2">
+              <p
+                className="text-xs uppercase font-bold tracking-widest mt-2"
+                style={{ color: theme.accent }}
+              >
                 Years Exp
               </p>
             </div>
@@ -639,7 +840,10 @@ const About = () => {
               <h4 className="text-5xl font-black text-white tracking-tighter">
                 15+
               </h4>
-              <p className="text-xs text-cyan-500 uppercase font-bold tracking-widest mt-2">
+              <p
+                className="text-xs uppercase font-bold tracking-widest mt-2"
+                style={{ color: theme.accent }}
+              >
                 Projects
               </p>
             </div>
@@ -690,7 +894,7 @@ const TiltCard = ({ children }) => {
 };
 
 const FeaturedProjects = () => {
-  const { t } = useLanguage();
+  const { t, theme } = useAppContext();
   const [activeProject, setActiveProject] = useState(null);
   const videoRef = useRef(null);
 
@@ -717,11 +921,17 @@ const FeaturedProjects = () => {
           densityProfile="centerHeavy"
           className="z-0"
         />
+
         <div className="relative z-10">
           <div className="max-w-[90rem] mx-auto mb-24">
             <h2 className="w-fit md:-ml-12 text-7xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">
               Selected{" "}
-              <span className="text-cyan-500 text-shadow-glow">Works</span>
+              <span
+                style={{ color: theme.accent }}
+                className="text-shadow-glow"
+              >
+                Works
+              </span>
             </h2>
           </div>
 
@@ -755,7 +965,10 @@ const FeaturedProjects = () => {
                 </TiltCard>
 
                 <div className="w-full md:w-[35%] space-y-8">
-                  <span className="text-cyan-400 font-mono text-sm tracking-[0.4em] uppercase font-bold">
+                  <span
+                    className="font-mono text-sm tracking-[0.4em] uppercase font-bold"
+                    style={{ color: theme.accent }}
+                  >
                     {project.tag}
                   </span>
 
@@ -763,14 +976,29 @@ const FeaturedProjects = () => {
                     {project.title}
                   </h3>
 
-                  <p className="text-blue-50/70 leading-relaxed text-xl border-l-4 border-cyan-500/20 pl-8">
+                  <p
+                    className="text-blue-50/70 leading-relaxed text-xl border-l-4 pl-8"
+                    style={{ borderColor: `${theme.accent}33` }}
+                  >
                     {project.desc}
                   </p>
 
                   <div className="flex gap-6 pt-4">
                     <button
                       onClick={() => setActiveProject(project)}
-                      className="bg-white text-black px-12 py-5 rounded-2xl font-black hover:bg-cyan-500 hover:text-white transition-all uppercase text-sm tracking-widest shadow-xl"
+                      className="px-12 py-5 rounded-2xl font-black transition-all uppercase text-sm tracking-widest shadow-xl text-white"
+                      style={{
+                        backgroundColor: theme.buttonBg,
+                        boxShadow: `0 10px 30px ${theme.buttonBg}33`,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#ffffff";
+                        e.currentTarget.style.color = theme.buttonHoverText;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = theme.buttonBg;
+                        e.currentTarget.style.color = "#ffffff";
+                      }}
                     >
                       Preview
                     </button>
@@ -779,7 +1007,23 @@ const FeaturedProjects = () => {
                       href={project.github}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-5 border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-colors"
+                      className="p-5 border rounded-2xl text-white transition-colors"
+                      style={{
+                        borderColor: "rgba(255,255,255,0.10)",
+                        background: "rgba(255,255,255,0.02)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = `${theme.accent}14`;
+                        e.currentTarget.style.borderColor = `${theme.accent}44`;
+                        e.currentTarget.style.color = theme.accentSoft;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,255,255,0.02)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(255,255,255,0.10)";
+                        e.currentTarget.style.color = "#ffffff";
+                      }}
                     >
                       <Github size={28} />
                     </a>
@@ -806,7 +1050,13 @@ const FeaturedProjects = () => {
             >
               <button
                 onClick={() => setActiveProject(null)}
-                className="absolute -top-16 right-0 text-white hover:text-cyan-400 transition-colors"
+                className="absolute -top-16 right-0 text-white transition-colors"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = theme.accentSoft;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#ffffff";
+                }}
               >
                 <X size={40} />
               </button>
@@ -828,7 +1078,7 @@ const FeaturedProjects = () => {
 };
 
 const ProjectList = () => {
-  const { t } = useLanguage();
+  const { t, theme } = useAppContext();
   const scrollRef = useRef(null);
 
   const scroll = (dir) => {
@@ -859,8 +1109,18 @@ const ProjectList = () => {
         className="z-0"
       />
 
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-[#082847]/15 to-[#061a2d]/45" />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.06),transparent_60%)]" />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `linear-gradient(to bottom, transparent, ${theme.sectionEdge}26, ${theme.rootTo}66)`,
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at top, ${theme.accent}12, transparent 60%)`,
+        }}
+      />
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6">
         <div className="flex justify-between items-end mb-16 px-2">
@@ -871,7 +1131,19 @@ const ProjectList = () => {
           <div className="flex gap-4">
             <button
               onClick={() => scroll("left")}
-              className="p-4 border border-white/10 rounded-full hover:bg-cyan-500 text-white transition-all shadow-lg"
+              className="p-4 border rounded-full text-white transition-all shadow-lg"
+              style={{
+                borderColor: "rgba(255,255,255,0.10)",
+                background: "rgba(255,255,255,0.02)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = theme.buttonBg;
+                e.currentTarget.style.borderColor = `${theme.accent}55`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)";
+              }}
               aria-label="Scroll Left"
             >
               <ChevronLeft />
@@ -879,7 +1151,19 @@ const ProjectList = () => {
 
             <button
               onClick={() => scroll("right")}
-              className="p-4 border border-white/10 rounded-full hover:bg-cyan-500 text-white transition-all shadow-lg"
+              className="p-4 border rounded-full text-white transition-all shadow-lg"
+              style={{
+                borderColor: "rgba(255,255,255,0.10)",
+                background: "rgba(255,255,255,0.02)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = theme.buttonBg;
+                e.currentTarget.style.borderColor = `${theme.accent}55`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)";
+              }}
               aria-label="Scroll Right"
             >
               <ChevronRight />
@@ -889,77 +1173,87 @@ const ProjectList = () => {
 
         <div
           ref={scrollRef}
-          className="grid grid-rows-2 grid-flow-col gap-8 overflow-x-auto pb-8 no-scrollbar snap-x snap-mandatory"
+          className="grid grid-rows-2 grid-flow-col gap-8 overflow-x-auto pb-8 no-scrollbar"
         >
-          {PROJECTS.map((project, i) => {
-            const trans = t.projects.list[i] || t.projects.list[0];
+          {PROJECTS.map((project, index) => {
+            const projectText = t.projects.list[index];
 
             return (
-              <motion.div
-                key={project.id || i}
-                className="w-[320px] md:w-[400px] snap-start group"
-                initial={{ opacity: 0, y: 20 }}
+              <motion.a
+                key={project.id}
+                href={project.demoUrl}
+                target="_blank"
+                rel="noreferrer"
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+                transition={{ duration: 0.45 }}
+                className="group relative w-[320px] md:w-[400px] rounded-[2rem] overflow-hidden border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-2xl flex flex-col h-full"
               >
-                <div className="relative aspect-video overflow-hidden rounded-[2rem] mb-6 border border-white/10 bg-white/5 shadow-xl">
-                  {project.video ? (
+                <div className="relative aspect-video overflow-hidden">
+                  {project.video !== "null" ? (
                     <video
                       src={project.video}
-                      poster={project.image}
-                      className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      autoPlay
                       muted
                       loop
-                      autoPlay
                       playsInline
                     />
                   ) : (
                     <img
-                      src={project.image || "/photos/placeholder.jpg"}
-                      alt={trans.title}
-                      className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                      src={project.image}
+                      alt={projectText.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   )}
 
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                    <a
-                      href={project.gitUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-4 bg-white text-black rounded-full hover:scale-110 hover:bg-cyan-500 hover:text-white transition-all shadow-2xl"
-                    >
-                      <Github size={24} />
-                    </a>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
-                    {project.demoUrl && (
-                      <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-4 bg-white text-black rounded-full hover:scale-110 hover:bg-cyan-500 hover:text-white transition-all shadow-2xl"
-                      >
-                        <ExternalLink size={24} />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex justify-between px-2 items-start">
-                  <div className="max-w-[70%]">
-                    <h3 className="font-black text-lg text-white group-hover:text-cyan-400 transition-colors truncate">
-                      {trans.title}
-                    </h3>
-
-                    <p className="text-xs text-blue-100/40 line-clamp-2 mt-1 font-medium leading-relaxed">
-                      {trans.description}
-                    </p>
-                  </div>
-
-                  <span className="text-[10px] h-fit border border-cyan-500/30 px-3 py-1.5 rounded-lg text-cyan-400 font-black uppercase tracking-widest whitespace-nowrap bg-cyan-500/5">
+                  <span
+                    className="absolute top-4 left-4 text-[10px] px-3 py-1.5 rounded-lg font-black uppercase tracking-widest"
+                    style={{
+                      color: theme.accentMuted,
+                      border: `1px solid ${theme.accent}44`,
+                      background: `${theme.accent}16`,
+                    }}
+                  >
                     {project.category}
                   </span>
                 </div>
-              </motion.div>
+
+                <div className="p-6 md:p-7 flex flex-col flex-1 min-h-[240px]">
+                  <h3 className="text-2xl font-black text-white tracking-tight mb-3 min-h-[72px]">
+                    {projectText.title}
+                  </h3>
+
+                  <p className="text-blue-100/65 leading-relaxed text-sm md:text-base min-h-[72px]">
+                    {projectText.description}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-auto pt-6">
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-[0.2em]"
+                      style={{ color: theme.accent }}
+                    >
+                      View Project
+                    </span>
+
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-full border text-white transition-all"
+                        style={{
+                          borderColor: `${theme.accent}44`,
+                          background: `${theme.accent}10`,
+                        }}
+                      >
+                        <ExternalLink size={18} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.a>
             );
           })}
         </div>
@@ -969,7 +1263,7 @@ const ProjectList = () => {
 };
 
 const Contact = () => {
-  const { t } = useLanguage();
+  const { t, theme } = useAppContext();
   const form = useRef();
   const [status, setStatus] = useState("");
 
@@ -1001,9 +1295,15 @@ const Contact = () => {
         <div className="text-center mb-24">
           <h2 className="text-6xl md:text-8xl font-black mb-6 text-white tracking-tighter">
             Let's Dive{" "}
-            <span className="text-cyan-500 text-shadow-glow">In</span>
+            <span style={{ color: theme.accent }} className="text-shadow-glow">
+              In
+            </span>
           </h2>
-          <p className="text-xl text-blue-100/40 font-medium">
+
+          <p
+            className="text-xl font-medium"
+            style={{ color: "rgba(219,234,254,0.40)" }}
+          >
             {t.contact.subtitle}
           </p>
         </div>
@@ -1011,40 +1311,75 @@ const Contact = () => {
         <div className="grid md:grid-cols-3 gap-16">
           <div className="space-y-12">
             <div>
-              <h4 className="text-cyan-500 font-mono text-xs uppercase tracking-widest mb-4 font-black">
+              <h4
+                className="font-mono text-xs uppercase tracking-widest mb-4 font-black"
+                style={{ color: theme.accent }}
+              >
                 Message me
               </h4>
+
               <a
                 href="mailto:hal.chung.chingyan.2025@gmail.com"
-                className="text-xl font-bold hover:text-cyan-400 transition-colors break-words"
+                className="text-xl font-bold transition-colors break-words"
+                style={{ color: "#ffffff" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = theme.accentSoft;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#ffffff";
+                }}
               >
                 hal.chung.chingyan.2025@gmail.com
               </a>
             </div>
 
             <div>
-              <h4 className="text-cyan-500 font-mono text-xs uppercase tracking-widest mb-4 font-black">
+              <h4
+                className="font-mono text-xs uppercase tracking-widest mb-4 font-black"
+                style={{ color: theme.accent }}
+              >
                 Socials
               </h4>
+
               <a
                 href="https://github.com/WillYan0224"
                 target="_blank"
                 rel="noreferrer"
-                className="text-white hover:text-cyan-400 transition-colors inline-block"
+                className="inline-flex items-center justify-center w-12 h-12 rounded-2xl transition-all"
+                style={{
+                  color: "#ffffff",
+                  border: `1px solid ${theme.accent}33`,
+                  background: `${theme.accent}10`,
+                  boxShadow: `0 0 18px ${theme.accent}18`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = theme.accentSoft;
+                  e.currentTarget.style.background = `${theme.accent}18`;
+                  e.currentTarget.style.boxShadow = `0 0 24px ${theme.accent}30`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#ffffff";
+                  e.currentTarget.style.background = `${theme.accent}10`;
+                  e.currentTarget.style.boxShadow = `0 0 18px ${theme.accent}18`;
+                }}
               >
-                <Github size={40} />
+                <Github size={24} />
               </a>
             </div>
           </div>
 
-          <div className="md:col-span-2 bg-white/5 p-10 md:p-16 rounded-[3rem] border border-white/10 backdrop-blur-2xl shadow-2xl">
+          <div
+            className="md:col-span-2 p-10 md:p-16 rounded-[3rem] border border-white/10 backdrop-blur-2xl shadow-2xl"
+            style={{ background: "rgba(255,255,255,0.05)" }}
+          >
             <form ref={form} onSubmit={sendEmail} className="space-y-8">
               <div className="grid md:grid-cols-2 gap-8">
                 <input
                   required
                   name="user_name"
                   placeholder={t.contact.name}
-                  className="w-full bg-white/5 border-b border-white/20 p-4 focus:outline-none focus:border-cyan-500 text-white text-lg transition-colors placeholder:text-white/20"
+                  className="w-full bg-white/5 border-b p-4 focus:outline-none text-white text-lg transition-colors placeholder:text-white/20"
+                  style={{ borderColor: `${theme.accent}44` }}
                 />
 
                 <input
@@ -1052,7 +1387,8 @@ const Contact = () => {
                   name="user_email"
                   type="email"
                   placeholder={t.contact.email}
-                  className="w-full bg-white/5 border-b border-white/20 p-4 focus:outline-none focus:border-cyan-500 text-white text-lg transition-colors placeholder:text-white/20"
+                  className="w-full bg-white/5 border-b p-4 focus:outline-none text-white text-lg transition-colors placeholder:text-white/20"
+                  style={{ borderColor: `${theme.accent}44` }}
                 />
               </div>
 
@@ -1061,10 +1397,25 @@ const Contact = () => {
                 name="message"
                 rows="4"
                 placeholder="Briefly describe your idea."
-                className="w-full bg-white/5 border-b border-white/20 p-4 focus:outline-none focus:border-cyan-500 text-white text-lg transition-colors placeholder:text-white/20"
+                className="w-full bg-white/5 border-b p-4 focus:outline-none text-white text-lg transition-colors placeholder:text-white/20"
+                style={{ borderColor: `${theme.accent}44` }}
               />
 
-              <button className="w-full bg-cyan-500 hover:bg-white hover:text-cyan-600 text-white font-black py-6 rounded-2xl transition-all shadow-xl shadow-cyan-500/20 uppercase tracking-widest">
+              <button
+                className="w-full text-white font-black py-6 rounded-2xl transition-all shadow-xl uppercase tracking-widest"
+                style={{
+                  backgroundColor: theme.buttonBg,
+                  boxShadow: `0 10px 30px ${theme.buttonBg}33`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                  e.currentTarget.style.color = theme.buttonHoverText;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.buttonBg;
+                  e.currentTarget.style.color = "#ffffff";
+                }}
+              >
                 {status === "sending"
                   ? "Sending..."
                   : status === "success"
@@ -1082,13 +1433,24 @@ const Contact = () => {
 // --- MAIN APP ---
 function App() {
   const [language, setLanguage] = useState("en");
+  const [heroTheme, setHeroTheme] = useState("ocean");
+
   const t = TRANSLATIONS[language];
+  const theme = THEME_PRESETS[heroTheme];
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      <div className="min-h-screen text-white selection:bg-cyan-400 selection:text-black bg-gradient-to-b from-[#004C99] to-[#001933]">
+    <AppContext.Provider
+      value={{ language, setLanguage, t, heroTheme, setHeroTheme, theme }}
+    >
+      <div
+        className="min-h-screen text-white selection:text-black"
+        style={{
+          background: `linear-gradient(to bottom, ${theme.rootFrom}, ${theme.rootTo})`,
+          ["--selectionColor"]: theme.accent,
+        }}
+      >
         <Navbar />
-
+        <ThemeDock />
         <main className="relative z-10">
           <Hero />
           <TechMarquee />
@@ -1097,12 +1459,18 @@ function App() {
           <ProjectList />
           <Contact />
 
-          <footer className="py-16 text-center text-blue-100/20 text-xs border-t border-white/5 bg-black/40 backdrop-blur-md">
+          <footer
+            className="py-16 text-center text-xs border-t border-white/5 backdrop-blur-md"
+            style={{
+              color: "rgba(255,255,255,0.22)",
+              background: "rgba(0,0,0,0.28)",
+            }}
+          >
             © {new Date().getFullYear()} Yan. Deep Dive Graphics Portfolio.
           </footer>
         </main>
       </div>
-    </LanguageContext.Provider>
+    </AppContext.Provider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -11,7 +11,42 @@ void main() {
 }
 `;
 
+const HERO_THEMES = {
+  ocean: {
+    topColor: [0.58, 0.88, 0.92],
+    upperColor: [0.04, 0.32, 0.59],
+    lowerColor: [0.05, 0.29, 0.52],
+    flareColor: [0.88, 0.98, 0.92],
+    shaftColor: [0.9, 1.0, 0.88],
+    topTransparency: 0.78,
+  },
+  forest: {
+    topColor: [0.56, 0.86, 0.7],
+    upperColor: [0.22, 0.56, 0.34],
+    lowerColor: [0.05, 0.22, 0.18],
+    flareColor: [0.92, 1.0, 0.82],
+    shaftColor: [0.9, 0.98, 0.8],
+    topTransparency: 0.8,
+  },
+  desert: {
+    topColor: [0.95, 0.82, 0.56],
+    upperColor: [0.71, 0.48, 0.22],
+    lowerColor: [0.28, 0.17, 0.1],
+    flareColor: [1.0, 0.92, 0.7],
+    shaftColor: [1.0, 0.92, 0.72],
+    topTransparency: 0.84,
+  },
+};
+
 const fragmentShader = `
+
+uniform vec3 uTopColor;
+uniform vec3 uUpperColor;
+uniform vec3 uLowerColor;
+uniform vec3 uFlareColor;
+uniform vec3 uShaftColor;
+uniform float uTopTransparency;
+
 precision highp float;
 
 uniform float uTime;
@@ -189,32 +224,41 @@ void main() {
 
   vec3 hitPos;
   float hitT;
-  vec3 seaColor = vec3(11.0, 82.0, 142.0) / 255.0;
+  vec3 seaColor = uLowerColor;
 
   float dist = raymarch(ro, rd, hitPos, hitT);
   vec3 normal = getNormal(hitPos);
 
-  float diffuse = dot(normal, rd) * 0.5 + 0.5;
-  vec3 color = mix(seaColor, vec3(15.0, 120.0, 152.0) / 255.0, diffuse);
+ float diffuse = dot(normal, rd) * 0.5 + 0.5;
+  vec3 color = mix(uLowerColor, uUpperColor, diffuse);
+
+  // upper water gets more verdant green
+  float upperMask = smoothstep(-0.18, 0.28, uv.y);
+  color = mix(color, uUpperColor, upperMask * 0.32);
+
+  // top water becomes lighter / more transparent-feeling
+  float topMask = smoothstep(0.02, 0.42, uv.y);
+  color = mix(color, uTopColor, topMask * (1.0 - uTopTransparency) * 0.55);
+
   color += pow(diffuse, 12.0) * 0.18;
 
   vec3 ref = normalize(refract(hitPos - vec3(8.0, 3.0, -3.0), normal, 0.05));
   float refraction = clamp(dot(ref, rd), 0.0, 1.0);
-  color += vec3(245.0, 250.0, 220.0) / 255.0 * 0.45 * pow(refraction, 1.5);
+  color += uFlareColor * 0.45 * pow(refraction, 1.5);
 
   vec3 col = mix(color, seaColor, pow(clamp(dist, 0.0, 1.0), 0.2));
 
   float shaftAngle = mix(-0.10, -0.22, uScroll);
-  col += vec3(232.0, 255.0, 214.0) / 255.0 * lightShafts(uv, shaftAngle) * 0.7;
+  col += uShaftColor * lightShafts(uv, shaftAngle) * 0.7;
 
   // mild underwater depth tint only, no beam
   float depthFog = smoothstep(0.12, -1.0, uv.y);
-  col = mix(col, vec3(20.0, 86.0, 70.0) / 255.0, depthFog * 0.2);
+  col = mix(col, uLowerColor, depthFog * 0.20);
 
   // keep lens flare subtle
   float flareAngle = mix(0.18, 0.55, uScroll);
   float flare = lensFlare(uv, vec2(-0.22, 0.42), flareAngle, 0.38);
-  col += vec3(0.90, 1.00, 0.84) * flare * 0.32;
+  col += uFlareColor * flare * 0.32;
 
   vec2 q = vUv;
   col *= 0.76 + 0.24 * pow(16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y), 0.2);
@@ -225,12 +269,44 @@ void main() {
 }
 `;
 
-function WaterPlane({ scroll = 0 }) {
+function WaterPlane({ scroll = 0, theme = "ocean" }) {
   const materialRef = useRef();
   const { size, gl } = useThree();
+  const themeValues = HERO_THEMES[theme] || HERO_THEMES.ocean;
+
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uScroll: { value: 0 },
+      uResolution: { value: new THREE.Vector2(1, 1) },
+      uTopColor: { value: new THREE.Vector3(...themeValues.topColor) },
+      uUpperColor: { value: new THREE.Vector3(...themeValues.upperColor) },
+      uLowerColor: { value: new THREE.Vector3(...themeValues.lowerColor) },
+      uFlareColor: { value: new THREE.Vector3(...themeValues.flareColor) },
+      uShaftColor: { value: new THREE.Vector3(...themeValues.shaftColor) },
+      uTopTransparency: { value: themeValues.topTransparency },
+    }),
+    [],
+  );
+
+  useEffect(() => {
+    if (!materialRef.current) return;
+
+    const u = materialRef.current.uniforms;
+
+    u.uTopColor.value.set(...themeValues.topColor);
+    u.uUpperColor.value.set(...themeValues.upperColor);
+    u.uLowerColor.value.set(...themeValues.lowerColor);
+    u.uFlareColor.value.set(...themeValues.flareColor);
+    u.uShaftColor.value.set(...themeValues.shaftColor);
+    u.uTopTransparency.value = themeValues.topTransparency;
+
+    materialRef.current.needsUpdate = true;
+  }, [theme, themeValues]);
 
   useFrame((state) => {
     if (!materialRef.current) return;
+
     materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
     materialRef.current.uniforms.uScroll.value = scroll;
     materialRef.current.uniforms.uResolution.value.set(
@@ -239,19 +315,11 @@ function WaterPlane({ scroll = 0 }) {
     );
   });
 
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uScroll: { value: 0 },
-      uResolution: { value: new THREE.Vector2(1, 1) },
-    }),
-    [],
-  );
-
   return (
     <mesh>
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
+        key={theme}
         ref={materialRef}
         uniforms={uniforms}
         vertexShader={vertexShader}
@@ -261,7 +329,7 @@ function WaterPlane({ scroll = 0 }) {
   );
 }
 
-export default function HeroWaterCanvas({ scroll = 0 }) {
+export default function HeroWaterCanvas({ scroll = 0, theme = "ocean" }) {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas
@@ -274,7 +342,7 @@ export default function HeroWaterCanvas({ scroll = 0 }) {
         }}
         camera={{ position: [0, 0, 1], zoom: 1 }}
       >
-        <WaterPlane scroll={scroll} />
+        <WaterPlane scroll={scroll} theme={theme} />
       </Canvas>
     </div>
   );
