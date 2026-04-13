@@ -7,8 +7,6 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
-    const sectionIds = ["about", "work", "contact"];
-
     const updateActiveSection = () => {
       const sectionIds = ["hero", "about", "work", "projects", "contact"];
       const triggerY = window.innerHeight * 0.35;
@@ -29,7 +27,6 @@ export default function Navbar() {
         if (!el) continue;
 
         const rect = el.getBoundingClientRect();
-
         const distance = Math.abs(rect.top - triggerY);
 
         if (rect.top <= triggerY && distance < closestDistance) {
@@ -54,6 +51,8 @@ export default function Navbar() {
     { id: "work", label: t.nav.work },
     { id: "contact", label: t.nav.contact },
   ];
+
+  const languages = ["en", "zh", "jp"];
 
   return (
     <nav className="fixed top-4 left-0 right-0 z-[100] px-4 md:px-6">
@@ -116,43 +115,30 @@ export default function Navbar() {
 
           <div className="relative z-10 flex items-center gap-3 md:gap-4">
             <div className="hidden md:flex items-center rounded-full border border-white/10 bg-white/[0.05] p-1">
-              <button
-                onClick={() => setLanguage("en")}
-                className="rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all"
-                style={{
-                  background:
-                    language === "en" ? `${theme.accent}22` : "transparent",
-                  color:
-                    language === "en"
-                      ? theme.accentMuted
-                      : "rgba(255,255,255,0.45)",
-                  boxShadow:
-                    language === "en"
-                      ? `inset 0 0 0 1px ${theme.accent}44`
-                      : "none",
-                }}
-              >
-                EN
-              </button>
+              {languages.map((lang) => {
+                const isActive = language === lang;
 
-              <button
-                onClick={() => setLanguage("jp")}
-                className="rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all"
-                style={{
-                  background:
-                    language === "jp" ? `${theme.accent}22` : "transparent",
-                  color:
-                    language === "jp"
-                      ? theme.accentMuted
-                      : "rgba(255,255,255,0.45)",
-                  boxShadow:
-                    language === "jp"
-                      ? `inset 0 0 0 1px ${theme.accent}44`
-                      : "none",
-                }}
-              >
-                JP
-              </button>
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => setLanguage(lang)}
+                    className="rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] transition-all"
+                    style={{
+                      background: isActive
+                        ? `${theme.accent}22`
+                        : "transparent",
+                      color: isActive
+                        ? theme.accentMuted
+                        : "rgba(255,255,255,0.45)",
+                      boxShadow: isActive
+                        ? `inset 0 0 0 1px ${theme.accent}44`
+                        : "none",
+                    }}
+                  >
+                    {lang.toUpperCase()}
+                  </button>
+                );
+              })}
             </div>
 
             <a

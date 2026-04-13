@@ -52,6 +52,7 @@ export default function Hero() {
   return (
     <section id="hero" ref={heroRef} className="relative h-[165vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Hero Water Canvas Background using three.js shader*/}
         <HeroWaterCanvas scroll={shaderScroll} theme={heroTheme} />
 
         <motion.div
