@@ -7,6 +7,7 @@ import { THEME_PRESETS } from "./data/themePresets";
 
 import Navbar from "./components/layout/Navbar";
 import ThemeDock from "./components/layout/ThemeDock";
+import ResumeDock from "./components/layout/ResumeDock";
 import Hero from "./components/hero/Hero";
 import TechMarquee from "./components/sections/TechMarquee";
 import About from "./components/sections/About";
@@ -35,6 +36,7 @@ function App() {
       >
         <Navbar />
         <ThemeDock />
+        <ResumeDock />
         <main className="relative z-10">
           <Hero />
           <TechMarquee />

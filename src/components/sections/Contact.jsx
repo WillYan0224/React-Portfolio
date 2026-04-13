@@ -97,22 +97,6 @@ export default function Contact() {
                 >
                   GitHub
                 </a>
-
-                <a
-                  href="https://www.linkedin.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-lg font-semibold transition-colors"
-                  style={{ color: "#ffffff" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = theme.accentSoft;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#ffffff";
-                  }}
-                >
-                  LinkedIn
-                </a>
               </div>
             </div>
           </div>
