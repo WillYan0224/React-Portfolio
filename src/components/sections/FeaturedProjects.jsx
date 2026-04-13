@@ -98,21 +98,29 @@ export default function FeaturedProjects() {
                   <div className="flex gap-6 pt-4">
                     <button
                       onClick={() => setActiveProject(project)}
-                      className="px-12 py-5 rounded-2xl font-black transition-all uppercase text-sm tracking-widest shadow-xl text-white"
+                      className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-2xl p-[1px]"
                       style={{
-                        backgroundColor: theme.buttonBg,
-                        boxShadow: `0 10px 30px ${theme.buttonBg}33`,
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "#ffffff";
-                        e.currentTarget.style.color = theme.buttonHoverText;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = theme.buttonBg;
-                        e.currentTarget.style.color = "#ffffff";
+                        background: `linear-gradient(135deg, ${theme.accent}80, rgba(255,255,255,0.10), ${theme.accent}36)`,
+                        boxShadow: `0 0 20px ${theme.accent}16`,
                       }}
                     >
-                      Preview
+                      <span
+                        className="relative inline-flex h-full items-center justify-center rounded-2xl px-10 text-sm font-black uppercase tracking-widest text-white transition-all duration-300"
+                        style={{
+                          background: "rgba(3,10,18,0.78)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          backdropFilter: "blur(10px)",
+                        }}
+                      >
+                        <span
+                          className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          style={{
+                            background: `radial-gradient(circle at 50% 0%, ${theme.accent}22, transparent 65%)`,
+                          }}
+                        />
+                        <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)] -translate-x-[140%] group-hover:translate-x-[140%] transition-transform duration-1000" />
+                        <span className="relative z-10">Preview</span>
+                      </span>
                     </button>
 
                     <a

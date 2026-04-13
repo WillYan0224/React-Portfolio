@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Github } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { useAppContext } from "../../context/AppContext";
 
@@ -59,7 +60,7 @@ export default function Contact() {
               </h4>
 
               <a
-                href="mailto:hal.chung.chingyan.2025@gmail.com"
+                href="mailto:yanchung1998@gmail.com"
                 className="text-xl font-bold transition-colors break-words"
                 style={{ color: "#ffffff" }}
                 onMouseEnter={(e) => {
@@ -69,7 +70,7 @@ export default function Contact() {
                   e.currentTarget.style.color = "#ffffff";
                 }}
               >
-                hal.chung.chingyan.2025@gmail.com
+                yanchung1998@gmail.com
               </a>
             </div>
 
@@ -81,21 +82,33 @@ export default function Contact() {
                 Social
               </h4>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-4">
                 <a
-                  href="https://github.com/"
+                  href="https://github.com/WillYan0224"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-lg font-semibold transition-colors"
-                  style={{ color: "#ffffff" }}
+                  aria-label="GitHub"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border transition-all duration-300"
+                  style={{
+                    color: "#ffffff",
+                    borderColor: "rgba(255,255,255,0.10)",
+                    background: "rgba(255,255,255,0.03)",
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = theme.accentSoft;
+                    e.currentTarget.style.borderColor = `${theme.accent}44`;
+                    e.currentTarget.style.background = `${theme.accent}12`;
+                    e.currentTarget.style.transform = "translateY(-2px)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = "#ffffff";
+                    e.currentTarget.style.borderColor =
+                      "rgba(255,255,255,0.10)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                    e.currentTarget.style.transform = "translateY(0px)";
                   }}
                 >
-                  GitHub
+                  <Github size={22} />
                 </a>
               </div>
             </div>
@@ -138,27 +151,39 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="w-full text-white font-black py-6 rounded-2xl transition-all shadow-xl uppercase tracking-widest"
+                disabled={status === "sending"}
+                className="group relative w-full overflow-hidden rounded-2xl p-[1px] disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: theme.buttonBg,
-                  boxShadow: `0 10px 30px ${theme.buttonBg}33`,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#ffffff";
-                  e.currentTarget.style.color = theme.buttonHoverText;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.buttonBg;
-                  e.currentTarget.style.color = "#ffffff";
+                  background: `linear-gradient(135deg, ${theme.accent}88, rgba(255,255,255,0.10), ${theme.accent}44)`,
+                  boxShadow: `0 0 28px ${theme.accent}18`,
                 }}
               >
-                {status === "sending"
-                  ? "Sending..."
-                  : status === "success"
-                    ? "Message Sent!"
-                    : status === "error"
-                      ? "Failed to Send"
-                      : t.contact.btn_send}
+                <span
+                  className="relative flex h-16 w-full items-center justify-center rounded-2xl text-sm font-black uppercase tracking-widest text-white transition-all duration-300"
+                  style={{
+                    background: "rgba(3,10,18,0.78)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <span
+                    className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{
+                      background: `radial-gradient(circle at 50% 0%, ${theme.accent}22, transparent 65%)`,
+                    }}
+                  />
+                  <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)] -translate-x-[140%] group-hover:translate-x-[140%] transition-transform duration-1000" />
+
+                  <span className="relative z-10">
+                    {status === "sending"
+                      ? "Sending..."
+                      : status === "success"
+                        ? "Message Sent!"
+                        : status === "error"
+                          ? "Failed to Send"
+                          : t.contact.btn_send}
+                  </span>
+                </span>
               </button>
             </form>
           </div>

@@ -131,8 +131,8 @@ export const TRANSLATIONS = {
     contact: {
       title: "Let's work together",
       subtitle: "Have a question in mind? Drop me a line.",
-      name: "Name",
-      email: "Email",
+      name: "Your Name",
+      email: "Your Email",
       message: "Message",
       btn_send: "Send Message",
       btn_sending: "Sending...",
