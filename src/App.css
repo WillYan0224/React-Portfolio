@@ -263,3 +263,156 @@ body {
   transform: rotate(12deg);
   opacity: 0.14;
 }
+
+/* -----------------------------
+   Theme Docker
+----------------------------- */
+.theme-dock-shell {
+  isolation: isolate;
+}
+
+.theme-dock-text-sweep {
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.95) 48%,
+    var(--dock-text-accent) 50%,
+    rgba(255, 255, 255, 0.85) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.94;
+  animation: themeDockTextSweep 4.4s linear infinite;
+  text-shadow: 0 0 10px var(--dock-text-accent);
+}
+
+@keyframes themeDockTextSweep {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+/* -----------------------------
+   Section navigator   
+----------------------------- */
+.section-nav-text-sweep {
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.9) 48%,
+    var(--text-sweep-soft) 50%,
+    var(--text-sweep-accent) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.95;
+  animation: sectionNavTextSweep 3.8s linear infinite;
+}
+
+@keyframes sectionNavTextSweep {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+/* -----------------------------
+   Resume Dock
+----------------------------- */
+.resume-dock-orbit {
+  position: relative;
+  isolation: isolate;
+}
+
+.resume-dock-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.resume-dock-edge-glow {
+  position: absolute;
+  inset: -4px;
+  padding: 3px;
+  border-radius: inherit;
+  overflow: hidden;
+  opacity: 1;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.resume-dock-edge-glow::before,
+.resume-dock-edge-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+  filter: blur(0.2px);
+  box-shadow:
+    0 0 10px var(--resume-accent),
+    0 0 18px var(--resume-accent);
+  animation: resumeDockEdgeLoop 7.2s linear infinite;
+}
+
+.resume-dock-edge-glow::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 206deg,
+    rgba(255, 255, 255, 0.08) 226deg,
+    var(--resume-accent-soft) 244deg,
+    var(--resume-accent) 260deg,
+    rgba(255, 255, 255, 0.24) 270deg,
+    var(--resume-accent-deep) 282deg,
+    rgba(255, 255, 255, 0.08) 296deg,
+    transparent 316deg,
+    transparent 360deg
+  );
+}
+
+.resume-dock-edge-glow::after {
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    transparent 206deg,
+    rgba(255, 255, 255, 0.08) 226deg,
+    var(--resume-accent-soft) 244deg,
+    var(--resume-accent) 260deg,
+    rgba(255, 255, 255, 0.24) 270deg,
+    var(--resume-accent-deep) 282deg,
+    rgba(255, 255, 255, 0.08) 296deg,
+    transparent 316deg,
+    transparent 360deg
+  );
+}
+
+@keyframes resumeDockEdgeLoop {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

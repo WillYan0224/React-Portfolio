@@ -10,22 +10,35 @@ export default function Navbar() {
     const sectionIds = ["about", "work", "contact"];
 
     const updateActiveSection = () => {
-      let current = null;
+      const sectionIds = ["hero", "about", "work", "projects", "contact"];
+      const triggerY = window.innerHeight * 0.35;
+
+      const scrollBottom = window.scrollY + window.innerHeight;
+      const pageHeight = document.documentElement.scrollHeight;
+
+      if (scrollBottom >= pageHeight - 4) {
+        setActiveSection("contact");
+        return;
+      }
+
+      let closestId = sectionIds[0];
+      let closestDistance = Infinity;
 
       for (const id of sectionIds) {
         const el = document.getElementById(id);
         if (!el) continue;
 
         const rect = el.getBoundingClientRect();
-        const triggerTop = window.innerHeight * 0.28;
 
-        if (rect.top <= triggerTop && rect.bottom >= triggerTop) {
-          current = id;
-          break;
+        const distance = Math.abs(rect.top - triggerY);
+
+        if (rect.top <= triggerY && distance < closestDistance) {
+          closestDistance = distance;
+          closestId = id;
         }
       }
 
-      setActiveSection(current);
+      setActiveSection(closestId);
     };
 
     updateActiveSection();

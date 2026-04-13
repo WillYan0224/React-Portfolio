@@ -14,6 +14,7 @@ import About from "./components/sections/About";
 import FeaturedProjects from "./components/sections/FeaturedProjects";
 import ProjectList from "./components/sections/ProjectList";
 import Contact from "./components/sections/Contact";
+import SectionNavigator from "./components/layout/SectionNavigator";
 
 // --- MAIN APP ---
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Navbar />
         <ThemeDock />
         <ResumeDock />
+        <SectionNavigator />
         <main className="relative z-10">
           <Hero />
           <TechMarquee />

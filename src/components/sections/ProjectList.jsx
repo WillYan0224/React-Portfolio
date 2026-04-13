@@ -18,7 +18,7 @@ export default function ProjectList() {
   };
 
   return (
-    <section className="relative py-32 overflow-hidden">
+    <section id="projects" className="relative py-32 overflow-hidden">
       <AmbientBubbles
         variant="section"
         scale={1.82}
@@ -53,7 +53,7 @@ export default function ProjectList() {
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10">
         <div className="mb-14 px-2">
           <h2 className="text-5xl font-black text-white tracking-tighter">
-            Projects
+            Other Projects
           </h2>
         </div>
 
@@ -145,7 +145,7 @@ export default function ProjectList() {
                     ) : (
                       <img
                         src={project.image}
-                        alt={projectText.title}
+                        alt=""
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     )}

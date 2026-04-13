@@ -83,14 +83,4 @@ export const PROJECTS = [
     gitUrl: "https://github.com/WillYan0224/NiagaraVFX",
     demoUrl: "https://github.com/WillYan0224/NiagaraVFX",
   },
-  {
-    id: 9,
-
-    category: "Pending...",
-    image: "null",
-    video: "null",
-
-    gitUrl: "#",
-    demoUrl: "#",
-  },
 ];

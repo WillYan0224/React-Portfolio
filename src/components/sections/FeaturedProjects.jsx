@@ -119,7 +119,7 @@ export default function FeaturedProjects() {
                           }}
                         />
                         <span className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)] -translate-x-[140%] group-hover:translate-x-[140%] transition-transform duration-1000" />
-                        <span className="relative z-10">Preview</span>
+                        <span className="relative z-10">{project.btn}</span>
                       </span>
                     </button>
 
@@ -127,25 +127,32 @@ export default function FeaturedProjects() {
                       href={project.github}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-5 border rounded-2xl text-white transition-colors"
+                      aria-label="View GitHub repository"
+                      className="group relative inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl p-[1px]"
                       style={{
-                        borderColor: "rgba(255,255,255,0.10)",
-                        background: "rgba(255,255,255,0.02)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = `${theme.accent}14`;
-                        e.currentTarget.style.borderColor = `${theme.accent}44`;
-                        e.currentTarget.style.color = theme.accentSoft;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          "rgba(255,255,255,0.02)";
-                        e.currentTarget.style.borderColor =
-                          "rgba(255,255,255,0.10)";
-                        e.currentTarget.style.color = "#ffffff";
+                        background: `linear-gradient(135deg, ${theme.accent}65, rgba(255,255,255,0.08), ${theme.accent}24)`,
+                        boxShadow: `0 0 18px ${theme.accent}10`,
                       }}
                     >
-                      <Github size={28} />
+                      <span
+                        className="relative flex h-full w-full items-center justify-center rounded-2xl text-white"
+                        style={{
+                          background: "rgba(3,10,18,0.78)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          backdropFilter: "blur(10px)",
+                        }}
+                      >
+                        <span
+                          className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          style={{
+                            background: `radial-gradient(circle at 50% 0%, ${theme.accent}18, transparent 70%)`,
+                          }}
+                        />
+                        <Github
+                          size={22}
+                          className="relative z-10 transition-all duration-300 group-hover:-translate-y-[1px] group-hover:scale-105"
+                        />
+                      </span>
                     </a>
                   </div>
                 </div>

@@ -87,28 +87,32 @@ export default function Contact() {
                   href="https://github.com/WillYan0224"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="GitHub"
-                  className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border transition-all duration-300"
+                  aria-label="View GitHub repository"
+                  className="group relative inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl p-[1px]"
                   style={{
-                    color: "#ffffff",
-                    borderColor: "rgba(255,255,255,0.10)",
-                    background: "rgba(255,255,255,0.03)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = theme.accentSoft;
-                    e.currentTarget.style.borderColor = `${theme.accent}44`;
-                    e.currentTarget.style.background = `${theme.accent}12`;
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#ffffff";
-                    e.currentTarget.style.borderColor =
-                      "rgba(255,255,255,0.10)";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-                    e.currentTarget.style.transform = "translateY(0px)";
+                    background: `linear-gradient(135deg, ${theme.accent}65, rgba(255,255,255,0.08), ${theme.accent}24)`,
+                    boxShadow: `0 0 18px ${theme.accent}10`,
                   }}
                 >
-                  <Github size={22} />
+                  <span
+                    className="relative flex h-full w-full items-center justify-center rounded-2xl text-white"
+                    style={{
+                      background: "rgba(3,10,18,0.78)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      backdropFilter: "blur(10px)",
+                    }}
+                  >
+                    <span
+                      className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      style={{
+                        background: `radial-gradient(circle at 50% 0%, ${theme.accent}18, transparent 70%)`,
+                      }}
+                    />
+                    <Github
+                      size={22}
+                      className="relative z-10 transition-all duration-300 group-hover:-translate-y-[1px] group-hover:scale-105"
+                    />
+                  </span>
                 </a>
               </div>
             </div>

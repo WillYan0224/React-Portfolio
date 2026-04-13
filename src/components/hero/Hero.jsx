@@ -50,7 +50,7 @@ export default function Hero() {
   const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.97]);
 
   return (
-    <section ref={heroRef} className="relative h-[165vh]">
+    <section id="hero" ref={heroRef} className="relative h-[165vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <HeroWaterCanvas scroll={shaderScroll} theme={heroTheme} />
 
