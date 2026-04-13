@@ -1,69 +1,538 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #001933;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-@keyframes logo-spin {
-  from {
+.text-shadow-glow {
+  text-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+}
+
+/* -----------------------------
+   Bubble motion
+----------------------------- */
+@keyframes bubble-float {
+  0% {
+    transform: translate3d(var(--bubble-drift-start-x, 0px), 0, 0)
+      scale(var(--bubble-scale-start, 0.9));
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--bubble-opacity-peak, 0.45);
+  }
+  100% {
+    transform: translate3d(
+        var(--bubble-drift-end-x, -12px),
+        calc(-1 * var(--bubble-rise-distance, 120vh)),
+        0
+      )
+      scale(var(--bubble-scale-end, 1.08));
+    opacity: 0;
+  }
+}
+
+.bubble-float {
+  animation-name: bubble-float;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+.bubble-float {
+  animation-name: bubble-float;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+/* -----------------------------
+   Waterline motion
+----------------------------- */
+@keyframes waterline-drift {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-18%);
+  }
+}
+
+@keyframes waterline-drift-reverse {
+  0% {
+    transform: translateX(-6%);
+  }
+  100% {
+    transform: translateX(-22%);
+  }
+}
+
+@keyframes waterline-shimmer-slide {
+  0% {
+    transform: translateX(-24%);
+    opacity: 0.14;
+  }
+  50% {
+    transform: translateX(10%);
+    opacity: 0.34;
+  }
+  100% {
+    transform: translateX(28%);
+    opacity: 0.14;
+  }
+}
+
+@keyframes waterline-noise-scroll {
+  0% {
+    background-position:
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      220px 0,
+      -140px 0;
+  }
+}
+
+@keyframes waterline-cut-shift {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.22;
+  }
+  50% {
+    background-position: 100% 0%;
+    opacity: 0.42;
+  }
+  100% {
+    background-position: 0% 0%;
+    opacity: 0.22;
+  }
+}
+
+.waterline-drift-track {
+  will-change: transform;
+  animation: waterline-drift 8s linear infinite;
+  filter: blur(0.35px) drop-shadow(0 0 8px rgba(180, 240, 255, 0.22));
+}
+
+.waterline-drift-track-reverse {
+  will-change: transform;
+  animation: waterline-drift-reverse 12s linear infinite;
+  filter: blur(1.2px);
+}
+
+.waterline-shimmer-track {
+  will-change: transform, opacity;
+  animation: waterline-shimmer-slide 4.5s ease-in-out infinite;
+}
+
+.waterline-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 18%,
+    rgba(180, 240, 255, 0.16) 44%,
+    rgba(255, 255, 255, 0.03) 68%,
+    transparent 100%
+  );
+  filter: blur(5px);
+}
+
+.waterline-noise {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 2px,
+      transparent 2px,
+      transparent 22px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(120, 220, 255, 0.035) 0px,
+      rgba(120, 220, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 14px
+    );
+  filter: blur(1.2px);
+  animation: waterline-noise-scroll 8s linear infinite;
+}
+
+.waterline-cut-band {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 25%,
+      rgba(180, 240, 255, 0.22) 48%,
+      rgba(255, 255, 255, 0.08) 64%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 30%,
+      rgba(120, 220, 255, 0.18) 50%,
+      rgba(255, 255, 255, 0.1) 70%,
+      transparent 100%
+    );
+  filter: blur(8px);
+  background-size:
+    100% 100%,
+    220% 100%;
+  animation: waterline-cut-shift 5.5s ease-in-out infinite;
+}
+
+.card-water-distort-band {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.08) 20%,
+      rgba(180, 240, 255, 0.14) 50%,
+      rgba(255, 255, 255, 0.05) 76%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(120, 220, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.05) 75%,
+      transparent 100%
+    );
+  filter: blur(10px);
+  background-size:
+    100% 100%,
+    180% 100%;
+  animation: waterline-cut-shift 6.5s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+/* -----------------------------
+   Underwater shafts
+----------------------------- */
+.light-shaft {
+  position: absolute;
+  top: -8%;
+  height: 70%;
+  width: 18vw;
+  background: linear-gradient(
+    to bottom,
+    rgba(180, 240, 255, 0.16) 0%,
+    rgba(120, 220, 255, 0.08) 28%,
+    rgba(120, 220, 255, 0.02) 60%,
+    transparent 100%
+  );
+  filter: blur(20px);
+  transform-origin: top center;
+  mix-blend-mode: screen;
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.shaft-1 {
+  left: 12%;
+  transform: rotate(9deg);
+}
+
+.shaft-2 {
+  left: 38%;
+  width: 22vw;
+  transform: rotate(-6deg);
+  opacity: 0.18;
+}
+
+.shaft-3 {
+  right: 10%;
+  width: 16vw;
+  transform: rotate(12deg);
+  opacity: 0.14;
+}
+
+/* -----------------------------
+   Theme Docker
+----------------------------- */
+.theme-dock-shell {
+  isolation: isolate;
+}
+
+.theme-dock-text-sweep {
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.95) 48%,
+    var(--dock-text-accent) 50%,
+    rgba(255, 255, 255, 0.85) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.94;
+  animation: themeDockTextSweep 4.4s linear infinite;
+  text-shadow: 0 0 10px var(--dock-text-accent);
+}
+
+@keyframes themeDockTextSweep {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+/* -----------------------------
+   Section navigator   
+----------------------------- */
+.section-nav-text-sweep {
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.9) 48%,
+    var(--text-sweep-soft) 50%,
+    var(--text-sweep-accent) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.95;
+  animation: sectionNavTextSweep 3.8s linear infinite;
+}
+
+@keyframes sectionNavTextSweep {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+/* -----------------------------
+   Resume Dock
+----------------------------- */
+.resume-dock-orbit {
+  position: relative;
+  isolation: isolate;
+}
+
+.resume-dock-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.resume-dock-edge-glow {
+  position: absolute;
+  inset: -4px;
+  padding: 3px;
+  border-radius: inherit;
+  overflow: hidden;
+  opacity: 1;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.resume-dock-edge-glow::before,
+.resume-dock-edge-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+  filter: blur(0.2px);
+  box-shadow:
+    0 0 10px var(--resume-accent),
+    0 0 18px var(--resume-accent);
+  animation: resumeDockEdgeLoop 7.2s linear infinite;
+}
+
+.resume-dock-edge-glow::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 206deg,
+    rgba(255, 255, 255, 0.08) 226deg,
+    var(--resume-accent-soft) 244deg,
+    var(--resume-accent) 260deg,
+    rgba(255, 255, 255, 0.24) 270deg,
+    var(--resume-accent-deep) 282deg,
+    rgba(255, 255, 255, 0.08) 296deg,
+    transparent 316deg,
+    transparent 360deg
+  );
+}
+
+.resume-dock-edge-glow::after {
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    transparent 206deg,
+    rgba(255, 255, 255, 0.08) 226deg,
+    var(--resume-accent-soft) 244deg,
+    var(--resume-accent) 260deg,
+    rgba(255, 255, 255, 0.24) 270deg,
+    var(--resume-accent-deep) 282deg,
+    rgba(255, 255, 255, 0.08) 296deg,
+    transparent 316deg,
+    transparent 360deg
+  );
+}
+
+@keyframes resumeDockEdgeLoop {
+  0% {
     transform: rotate(0deg);
   }
-  to {
+  100% {
     transform: rotate(360deg);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* -----------------------------
+   Title Card
+----------------------------- */
+.featured-media-orbit {
+  position: relative;
+  isolation: isolate;
 }
 
-@keyframes neon-gradient {
+.featured-media-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.featured-media-edge-glow {
+  position: absolute;
+  inset: -6px;
+  padding: 3.5px;
+  border-radius: inherit;
+  overflow: hidden;
+  opacity: 1;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.featured-media-edge-glow::before,
+.featured-media-edge-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+  filter: blur(0.08px);
+  animation: featuredMediaEdgeLoop 7.8s linear infinite;
+}
+
+.featured-media-edge-glow::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 220deg,
+    rgba(255, 255, 255, 0.08) 236deg,
+    var(--media-accent-soft) 246deg,
+    rgba(255, 255, 255, 0.98) 254deg,
+    var(--media-accent) 262deg,
+    rgba(255, 255, 255, 0.36) 270deg,
+    var(--media-accent-deep) 280deg,
+    transparent 294deg,
+    transparent 360deg
+  );
+  box-shadow:
+    0 0 8px var(--media-accent),
+    0 0 18px var(--media-accent);
+}
+
+.featured-media-edge-glow::after {
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    transparent 220deg,
+    rgba(255, 255, 255, 0.08) 236deg,
+    var(--media-accent-soft) 246deg,
+    rgba(255, 255, 255, 0.88) 254deg,
+    var(--media-accent) 262deg,
+    rgba(255, 255, 255, 0.3) 270deg,
+    var(--media-accent-deep) 280deg,
+    transparent 294deg,
+    transparent 360deg
+  );
+  opacity: 0.78;
+  box-shadow:
+    0 0 6px var(--media-accent),
+    0 0 14px var(--media-accent);
+}
+
+@keyframes featuredMediaEdgeLoop {
   0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
+    transform: rotate(0deg);
   }
   100% {
-    background-position: 0% 50%;
+    transform: rotate(360deg);
   }
 }
 
-/* --- Neon Glow + Moving Gradient --- */
-.neon-gradient-text {
-  background-size: 200% 200%;
-  animation: neon-gradient 4s ease-in-out infinite;
-  text-shadow:
-    0 0 6px rgba(129, 140, 248, 0.8),
-    /* primary glow */ 0 0 14px rgba(168, 85, 247, 0.9),
-    /* secondary glow */ 0 0 28px rgba(168, 85, 247, 0.6); /* outer halo */
+/* -----------------------------
+   Project Card
+----------------------------- */
+.projectlist-title-sweep {
+  color: var(--title-accent-soft);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--title-accent) 25%, transparent);
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-.project-title {
-  color: #8b8cff;
-  text-shadow: 0 0 8px rgba(139, 140, 255, 0.35);
+.projectlist-title-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.92) 48%,
+    var(--title-accent-soft) 50%,
+    var(--title-accent) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.96;
+  animation: projectListTitleSweep 4.4s linear infinite;
+  pointer-events: none;
 }
