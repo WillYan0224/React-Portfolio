@@ -67,7 +67,7 @@ public/
 ## Author
 
 
-William Chingyan Chung
+Will Chingyan Chung
 GitHub: https://github.com/WillYan0224
 
 Portfolio: https://react-portfolio-4ss.pages.dev
